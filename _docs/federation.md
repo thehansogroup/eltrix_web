@@ -230,11 +230,29 @@ Old keys remain valid for verification until they expire.
 
 ### Server Verification
 
-Eltrix verifies all incoming federation requests:
+> **Do not rely on this for security yet.** Inbound federation is only partially
+> verified in the current beta. Specifically:
+>
+> - The `X-Matrix` request signature **is** checked, and inbound PDU signatures
+>   and content hashes **are** checked when
+>   `ELTRIX_FEDERATION__SIGNATURE_VERIFICATION` is `strict` (the default).
+> - PDU signatures are checked against the **transaction's origin server**, not
+>   against the server named in the event's `sender`.
+> - The **invite** endpoint does not enforce signature verification at all.
+> - `send_join` does not verify that the supplied event ID matches the event.
+> - **Matrix authorization rules are not evaluated on inbound events**, and there
+>   is no check that the sending server is a member of the room.
+>
+> The practical consequence is that a hostile homeserver can write events into
+> rooms this server participates in. Run this beta only between servers you
+> control. Closing these gaps is the current priority — see
+> [Status](/docs/status/).
+
+Once complete, verification will cover:
 
 1. TLS certificate validation
 2. Server key signature verification
-3. Event signature verification
+3. Event signature verification against the sender's server
 4. Authorization rules checking
 
 ### Spam Prevention
