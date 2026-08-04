@@ -1,0 +1,212 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eltrix — direction A, the record</title>
+<style>
+  /* ------------------------------------------------------------------
+     DIRECTION A — "the record"
+
+     Thesis: the page is a signed document, not a pitch. Every capability
+     is a line item and every line item carries its evidence in the margin.
+     The one memorable element is that evidence column: you cannot read a
+     claim here without seeing what backs it.
+
+     Palette is signature-ink rather than paper-and-terracotta: a cool
+     blue-grey stock, indigo ink, and two status inks that are readable as
+     words rather than as colour alone.
+     ------------------------------------------------------------------ */
+  :root {
+    --stock:      #EEF1F4;
+    --stock-deep: #E3E8ED;
+    --ink:        #17202E;
+    --ink-soft:   #4B5769;
+    --rule:       #C2CCD6;
+    --indigo:     #22314F;
+    --verified:   #1F5C41;
+    --partial:    #7A5000;
+    --absent:     #5F6875;
+
+    --prose: "Iowan Old Style", "Charter", Georgia, serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --stock: #10151C; --stock-deep: #161C25; --ink: #E4E9F0; --ink-soft: #9AA6B8;
+      --rule: #2C3746; --indigo: #A8BEE6; --verified: #6FCFA3; --partial: #E0B457; --absent: #7C8695;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--stock); color: var(--ink);
+    font-family: var(--prose); font-size: 17px; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .sheet { max-width: 60rem; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+
+  /* Masthead: the hash is the hero. A document identifies itself by what it
+     is, not by what it promises. */
+  .masthead { border-bottom: 2px solid var(--ink); padding-bottom: 1.75rem; }
+  .wordmark {
+    font-family: var(--mono); font-size: .8rem; letter-spacing: .22em;
+    text-transform: uppercase; color: var(--ink-soft); margin: 0 0 1.5rem;
+  }
+  h1 {
+    font-size: clamp(2rem, 5.5vw, 3.4rem); line-height: 1.08; margin: 0 0 1rem;
+    font-weight: 400; letter-spacing: -.015em; max-width: 22ch;
+  }
+  .standfirst { font-size: 1.15rem; color: var(--ink-soft); max-width: 56ch; margin: 0; }
+  .digest {
+    font-family: var(--mono); font-size: .72rem; color: var(--ink-soft);
+    margin-top: 1.75rem; word-break: break-all; line-height: 1.5;
+  }
+  .digest b { color: var(--indigo); font-weight: 600; }
+
+  section { margin-top: 3.5rem; }
+  h2 {
+    font-family: var(--mono); font-size: .78rem; letter-spacing: .18em;
+    text-transform: uppercase; color: var(--ink-soft); font-weight: 600;
+    margin: 0 0 1.25rem; padding-bottom: .5rem; border-bottom: 1px solid var(--rule);
+  }
+  p { max-width: 62ch; }
+
+  /* The ledger. Each row: claim, state, evidence. The evidence column is the
+     signature element — it is not hidden behind an interaction, because a
+     proof you have to go looking for is a proof most people never see. */
+  .ledger { border-top: 1px solid var(--rule); }
+  .item {
+    display: grid; grid-template-columns: 1fr auto; gap: .25rem 1.5rem;
+    padding: 1.1rem 0; border-bottom: 1px solid var(--rule);
+  }
+  .item h3 { grid-column: 1; margin: 0; font-size: 1.05rem; font-weight: 600; }
+  .state {
+    grid-column: 2; grid-row: 1; font-family: var(--mono); font-size: .7rem;
+    letter-spacing: .1em; text-transform: uppercase; white-space: nowrap;
+    align-self: center; padding: .2rem .55rem; border: 1px solid currentColor;
+  }
+  .state.is-done    { color: var(--verified); }
+  .state.is-partial { color: var(--partial); }
+  .state.is-none    { color: var(--absent); }
+  .evidence {
+    grid-column: 1 / -1; font-family: var(--mono); font-size: .76rem;
+    color: var(--ink-soft); line-height: 1.55; margin: 0;
+  }
+  .evidence::before { content: "└ "; color: var(--rule); }
+
+  .note {
+    background: var(--stock-deep); border-left: 3px solid var(--indigo);
+    padding: 1.1rem 1.25rem; margin-top: 2rem;
+  }
+  .note p { margin: 0; font-size: .98rem; }
+
+  .figures { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: 1.5rem; }
+  .figure .n { font-family: var(--mono); font-size: 2rem; color: var(--indigo); display: block; line-height: 1.1; }
+  .figure .l { font-size: .85rem; color: var(--ink-soft); }
+
+  /* The signing block. A document that ends without one is a leaflet. */
+  .signature {
+    margin-top: 4rem; border-top: 2px solid var(--ink); padding-top: 1.5rem;
+    font-family: var(--mono); font-size: .72rem; color: var(--ink-soft);
+    line-height: 1.7; word-break: break-all;
+  }
+  .signature .k { color: var(--ink); }
+  a { color: var(--indigo); text-underline-offset: .18em; }
+  a:focus-visible, details:focus-visible { outline: 2px solid var(--indigo); outline-offset: 3px; }
+</style>
+
+<div class="sheet">
+  <header class="masthead">
+    <p class="wordmark">Eltrix · Matrix homeserver · Elixir/OTP</p>
+    <h1>Every line on this page is checked against the server.</h1>
+    <p class="standfirst">
+      A landing page that claims a feature whose tests do not pass fails the
+      build. Not by policy — by a step in the pipeline that regenerates this
+      page's source from the test suite and refuses a difference.
+    </p>
+    <p class="digest">
+      generated from <b>status.json</b> · 181 routes · 21 settings ·
+      1&nbsp;520 tests, 12 properties · gate: format, audit, sobelow, credo,
+      coverage floor, dialyzer
+    </p>
+  </header>
+
+  <section>
+    <h2>Capabilities, and what backs them</h2>
+    <div class="ledger">
+      <article class="item">
+        <h3>Federation</h3>
+        <span class="state is-done">verified</span>
+        <p class="evidence">Live against Synapse 1.157. Invite, join, message and
+          end-to-end encryption both directions, confirmed by reading both databases.
+          Allowlisted; a server not on it is refused and the refusal is counted.</p>
+      </article>
+      <article class="item">
+        <h3>End-to-end encryption</h3>
+        <span class="state is-done">verified</span>
+        <p class="evidence">Device keys, one-time and fallback keys, to-device
+          messages, cross-signing with signatures actually verified, server-side
+          key backup with restore. Driven by Element Web and by our own client.</p>
+      </article>
+      <article class="item">
+        <h3>Room versions 10, 11, 12</h3>
+        <span class="state is-done">verified</span>
+        <p class="evidence">Redaction checked against 40 real v10 state events from
+          a production Synapse: 40/40 on event IDs, content hashes and signatures.</p>
+      </article>
+      <article class="item">
+        <h3>Spaces</h3>
+        <span class="state is-partial">partial</span>
+        <p class="evidence">Works in Element. No conformance suite run, so not done.</p>
+      </article>
+      <article class="item">
+        <h3>Threads</h3>
+        <span class="state is-partial">partial</span>
+        <p class="evidence">Works in Element. No conformance suite run, so not done.</p>
+      </article>
+      <article class="item">
+        <h3>Server-side search</h3>
+        <span class="state is-partial">partial</span>
+        <p class="evidence">Searched from Element's own box, one result, term
+          highlighted. No conformance suite run.</p>
+      </article>
+      <article class="item">
+        <h3>Push rules and notifications</h3>
+        <span class="state is-partial">partial</span>
+        <p class="evidence">Rendered rule set travels in sync. No APNs delivery yet.</p>
+      </article>
+      <article class="item">
+        <h3>VoIP / MatrixRTC</h3>
+        <span class="state is-none">not built</span>
+        <p class="evidence">Answers 404 M_UNRECOGNIZED, so a client detects its
+          absence rather than failing.</p>
+      </article>
+      <article class="item">
+        <h3>SSO / OIDC, 3PID, appservices</h3>
+        <span class="state is-none">not built</span>
+        <p class="evidence">All answer 404 M_UNRECOGNIZED.</p>
+      </article>
+    </div>
+
+    <div class="note">
+      <p><strong>Presence is absent on purpose.</strong> No <code>m.presence</code>
+      is sent or applied, and <code>/presence</code> returns 404 so clients can
+      feature-detect it. It is the largest source of federation traffic on the
+      network and the least load-bearing thing on it.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Measured, not asserted</h2>
+    <div class="figures">
+      <div class="figure"><span class="n">1520</span><span class="l">tests, plus 12 properties</span></div>
+      <div class="figure"><span class="n">181</span><span class="l">routes, read from the router</span></div>
+      <div class="figure"><span class="n">40/40</span><span class="l">real Synapse events matched</span></div>
+      <div class="figure"><span class="n">474s</span><span class="l">last verified database restore</span></div>
+    </div>
+  </section>
+
+  <footer class="signature">
+    <span class="k">server_name</span> eltrix.org<br>
+    <span class="k">ed25519</span> this block is where the running server's published
+    signing key appears; the page is generated by the server that holds it<br>
+    <span class="k">generated</span> from priv/docs/status.json — edit the claim, fail the build
+  </footer>
+</div>

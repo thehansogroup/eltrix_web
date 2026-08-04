@@ -1,0 +1,227 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eltrix — direction C, the panel</title>
+<style>
+  /* ------------------------------------------------------------------
+     DIRECTION C — "the panel"
+
+     Thesis: this is not a product you buy, it is equipment you run. The
+     page is a control surface: labelled strips, engraved legends, and a
+     bank of indicator lamps driven by the same status file the build
+     gates on. Lit, half-lit, dark — done, partial, not built.
+
+     Warm metal and bakelite rather than the usual dark dashboard: several
+     hues carrying meaning (jade, amber, dead glass), not one neon accent
+     on near-black.
+     ------------------------------------------------------------------ */
+  :root {
+    --case:    #2A2724;
+    --panel:   #35302A;
+    --panel-2: #3E3830;
+    --engrave: #191714;
+    --legend:  #E6E1D8;
+    --legend-2:#B5AC9E;
+    --jade:    #62B98A;
+    --amber:   #E8A33D;
+    --dead:    #57504A;
+    --screw:   #6E665D;
+
+    --label: "Futura", "Avenir Next", "Trebuchet MS", sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --prose: system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  /* The instrument does not have a light mode; it has a lamp. Under a light
+     scheme preference the case lightens but the legends stay engraved. */
+  @media (prefers-color-scheme: light) {
+    :root {
+      --case: #EAE5DB; --panel: #E4DFD5; --panel-2: #DBD5C9; --engrave: #CFC8BA;
+      --legend: #23201C; --legend-2: #4A443C; --screw: #A79E90;
+      /* Lamp hues darken for a light panel. A lamp is non-text UI and needs 3:1
+         against the surface it sits on; the values tuned for dark metal wash out
+         to 1.6:1 here, which is a lamp you cannot tell is lit. */
+      --jade: #1B7A50; --amber: #8A5A00; --dead: #B3ABA0;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--case); color: var(--legend);
+    font-family: var(--prose); font-size: 16px; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .rack { max-width: 68rem; margin: 0 auto; padding: 2rem 1rem 4rem; }
+
+  .unit {
+    background: linear-gradient(var(--panel), var(--panel-2));
+    border: 1px solid var(--engrave);
+    border-radius: 3px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.07), 0 1px 2px rgba(0,0,0,.35);
+    padding: 1.5rem; margin-bottom: 1rem; position: relative;
+  }
+  /* Corner screws. Two, not four — the panel is hinged on one side. */
+  .unit::before, .unit::after {
+    content: ""; position: absolute; width: 7px; height: 7px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, var(--screw), var(--engrave));
+    top: 10px;
+  }
+  .unit::before { left: 10px; }
+  .unit::after  { right: 10px; }
+
+  .legend {
+    font-family: var(--label); font-size: .68rem; letter-spacing: .26em;
+    text-transform: uppercase; color: var(--legend-2);
+    margin: 0 0 1.1rem; text-align: center;
+  }
+
+  h1 {
+    font-family: var(--label); font-weight: 500; letter-spacing: -.005em;
+    font-size: clamp(1.8rem, 4.8vw, 2.9rem); line-height: 1.12;
+    margin: 0 0 .8rem; max-width: 20ch;
+  }
+  .standfirst { color: var(--legend-2); max-width: 54ch; margin: 0; font-size: 1.05rem; }
+
+  /* The lamp bank — the signature element. Three states, distinguishable
+     without colour: a lit lamp has a ring, a half-lit lamp a half ring, a
+     dark lamp none, and each carries a word. */
+  .bank { display: grid; gap: 1px; background: var(--engrave); border: 1px solid var(--engrave); }
+  .strip {
+    display: grid; grid-template-columns: auto 1fr auto; align-items: center;
+    gap: 1rem; padding: .95rem 1.1rem; background: var(--panel);
+  }
+  .strip:nth-child(odd) { background: var(--panel-2); }
+  .lamp {
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--dead); box-shadow: inset 0 1px 2px rgba(0,0,0,.6);
+    position: relative; flex: none;
+  }
+  .strip[data-state="done"] .lamp {
+    background: var(--jade);
+    box-shadow: 0 0 9px rgba(98,185,138,.75), inset 0 1px 1px rgba(255,255,255,.35);
+  }
+  .strip[data-state="partial"] .lamp {
+    background: linear-gradient(90deg, var(--amber) 50%, var(--dead) 50%);
+    box-shadow: 0 0 7px rgba(232,163,61,.55), inset 0 1px 1px rgba(255,255,255,.25);
+  }
+  .strip .name { font-family: var(--label); font-size: .95rem; font-weight: 700; }
+  .strip .name small {
+    display: block; font-family: var(--prose); font-weight: 400;
+    font-size: .82rem; color: var(--legend-2); letter-spacing: 0;
+  }
+  .strip .read {
+    font-family: var(--mono); font-size: .68rem; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--legend-2); white-space: nowrap;
+  }
+  /* Deliberately not tinted to match the lamp. The lamp is the colour; the word
+     is the fact, and a word rendered in lamp-green is both harder to read and
+     redundant with the thing beside it. Colour is never the only signal here. */
+  .strip[data-state="done"] .read,
+  .strip[data-state="partial"] .read { color: var(--legend); }
+
+  /* Readouts: numbers behind glass. */
+  .meters { display: grid; grid-template-columns: repeat(auto-fit, minmax(8rem,1fr)); gap: 1px; background: var(--engrave); }
+  .meter { background: var(--engrave); padding: 1rem; text-align: center; }
+  .meter .v {
+    font-family: var(--mono); font-size: 1.55rem; color: var(--legend);
+    display: block;
+  }
+  .meter .k {
+    font-family: var(--label); font-size: .62rem; letter-spacing: .18em;
+    text-transform: uppercase; color: var(--legend-2);
+  }
+
+  .plate-note {
+    font-size: .95rem; color: var(--legend-2); max-width: 60ch; margin: 0;
+  }
+  .plate-note strong { color: var(--legend); }
+  code { font-family: var(--mono); font-size: .88em; }
+  footer {
+    font-family: var(--mono); font-size: .7rem; color: var(--legend-2);
+    text-align: center; padding-top: 1.5rem;
+  }
+  a { color: var(--jade); }
+  a:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+</style>
+
+<div class="rack">
+  <div class="unit">
+    <p class="legend">Eltrix — Matrix homeserver — Elixir / OTP</p>
+    <h1>Equipment, not a product.</h1>
+    <p class="standfirst">
+      A homeserver you run yourself. The lamps below are wired to the same file
+      the build gates on: claim a feature it does not call done, and the build
+      fails rather than the page lying.
+    </p>
+  </div>
+
+  <div class="unit">
+    <p class="legend">Capability status</p>
+    <div class="bank">
+      <div class="strip" data-state="done">
+        <span class="lamp" aria-hidden="true"></span>
+        <span class="name">Federation<small>Live with Synapse 1.157, both directions, allowlisted</small></span>
+        <span class="read">Verified</span>
+      </div>
+      <div class="strip" data-state="done">
+        <span class="lamp" aria-hidden="true"></span>
+        <span class="name">End-to-end encryption<small>Cross-signing verified, key backup restores</small></span>
+        <span class="read">Verified</span>
+      </div>
+      <div class="strip" data-state="done">
+        <span class="lamp" aria-hidden="true"></span>
+        <span class="name">Room versions 10, 11, 12<small>40 of 40 real Synapse events matched</small></span>
+        <span class="read">Verified</span>
+      </div>
+      <div class="strip" data-state="partial">
+        <span class="lamp" aria-hidden="true"></span>
+        <span class="name">Spaces<small>Works in Element; no conformance run</small></span>
+        <span class="read">Partial</span>
+      </div>
+      <div class="strip" data-state="partial">
+        <span class="lamp" aria-hidden="true"></span>
+        <span class="name">Threads<small>Works in Element; no conformance run</small></span>
+        <span class="read">Partial</span>
+      </div>
+      <div class="strip" data-state="partial">
+        <span class="lamp" aria-hidden="true"></span>
+        <span class="name">Server-side search<small>Works in Element; no conformance run</small></span>
+        <span class="read">Partial</span>
+      </div>
+      <div class="strip" data-state="partial">
+        <span class="lamp" aria-hidden="true"></span>
+        <span class="name">Push rules<small>Rule set travels in sync; no APNs delivery</small></span>
+        <span class="read">Partial</span>
+      </div>
+      <div class="strip" data-state="none">
+        <span class="lamp" aria-hidden="true"></span>
+        <span class="name">VoIP / MatrixRTC<small>Answers 404 so clients detect it</small></span>
+        <span class="read">Not built</span>
+      </div>
+      <div class="strip" data-state="none">
+        <span class="lamp" aria-hidden="true"></span>
+        <span class="name">SSO / OIDC, 3PID, appservices<small>All answer 404</small></span>
+        <span class="read">Not built</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="unit">
+    <p class="legend">Readouts</p>
+    <div class="meters">
+      <div class="meter"><span class="v">1520</span><span class="k">Tests</span></div>
+      <div class="meter"><span class="v">181</span><span class="k">Routes</span></div>
+      <div class="meter"><span class="v">21</span><span class="k">Settings</span></div>
+      <div class="meter"><span class="v">474s</span><span class="k">Last restore</span></div>
+    </div>
+  </div>
+
+  <div class="unit">
+    <p class="legend">Note</p>
+    <p class="plate-note">
+      <strong>Presence has no lamp because it has no wire.</strong> No
+      <code>m.presence</code> is sent or applied and <code>/presence</code>
+      returns 404, so a client can feature-detect it. It is the largest source of
+      federation traffic on the network and the least load-bearing feature on it.
+    </p>
+  </div>
+
+  <footer>eltrix.org — status lamps generated from the test suite</footer>
+</div>

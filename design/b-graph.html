@@ -1,0 +1,220 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eltrix — direction B, the graph</title>
+<style>
+  /* ------------------------------------------------------------------
+     DIRECTION B — "the graph"
+
+     Thesis: a Matrix room is a directed acyclic graph of signed events.
+     No other product's site could open with this, which is the argument
+     for it. The hero is that graph, drawn as a pen plotter would draw it —
+     stroke by stroke, in two inks on paper.
+
+     Deliberately not a dark field with one neon accent: the plotter
+     palette (paper, plotter blue, plotter red) belongs to technical
+     drawing, which is what a DAG diagram actually is.
+     ------------------------------------------------------------------ */
+  :root {
+    --paper:   #EDEAE3;
+    --paper-2: #E3DFD6;
+    --graphite:#1E1D1A;
+    --soft:    #5E5A52;
+    --blue:    #1B3A8C;
+    --red:     #B4232A;
+    --rule:    #CBC5B9;
+
+    --label: "Futura", "Avenir Next", "Trebuchet MS", sans-serif;
+    --prose: "Charter", "Iowan Old Style", Georgia, serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #14140F; --paper-2: #1B1A15; --graphite: #E8E4D9; --soft: #9A9488;
+      --blue: #8FB0F0; --red: #E8797E; --rule: #33312A;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--paper); color: var(--graphite);
+    font-family: var(--prose); font-size: 17px; line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+  }
+  .frame { max-width: 66rem; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
+
+  .plate { border: 1.5px solid var(--graphite); padding: 1.75rem 1.5rem; }
+  .plate-head {
+    display: flex; flex-wrap: wrap; gap: .75rem 1.5rem; align-items: baseline;
+    font-family: var(--label); font-size: .74rem; letter-spacing: .2em;
+    text-transform: uppercase; color: var(--soft);
+    border-bottom: 1px solid var(--rule); padding-bottom: .9rem; margin-bottom: 1.75rem;
+  }
+  .plate-head .t { color: var(--graphite); font-weight: 700; }
+  .plate-head .r { margin-left: auto; }
+
+  h1 {
+    font-family: var(--label); font-weight: 500;
+    font-size: clamp(1.9rem, 5vw, 3.1rem); line-height: 1.1;
+    letter-spacing: -.01em; margin: 0 0 .9rem; max-width: 20ch;
+  }
+  .standfirst { max-width: 54ch; color: var(--soft); font-size: 1.1rem; margin: 0; }
+
+  /* The plot. Strokes draw themselves once, as a plotter would; under
+     reduced motion they are simply present. */
+  .plot { margin: 2.25rem 0 0; }
+  .plot svg { width: 100%; height: auto; display: block; }
+  .edge { fill: none; stroke: var(--blue); stroke-width: 1.4; }
+  .node { fill: var(--paper); stroke: var(--blue); stroke-width: 1.6; }
+  .node.is-head { stroke: var(--red); }
+  .nlabel { font-family: var(--mono); font-size: 8px; fill: var(--soft); }
+  .caption {
+    font-family: var(--mono); font-size: .72rem; color: var(--soft);
+    margin: .75rem 0 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .edge { stroke-dasharray: 200; stroke-dashoffset: 200; animation: draw 1.1s ease-out forwards; }
+    .node, .nlabel { opacity: 0; animation: ink .35s ease-out forwards; }
+  }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  @keyframes ink  { to { opacity: 1; } }
+
+  section { margin-top: 3.25rem; }
+  h2 {
+    font-family: var(--label); font-size: .78rem; letter-spacing: .2em;
+    text-transform: uppercase; color: var(--soft); font-weight: 700;
+    margin: 0 0 1.25rem;
+  }
+  p { max-width: 62ch; }
+
+  /* Capabilities hang off the graph: each is a node with an edge back to
+     the trunk, so the structure says "these descend from one thing". */
+  .branch { border-left: 1.5px solid var(--rule); padding-left: 1.5rem; }
+  .cap { position: relative; padding: 1rem 0; border-bottom: 1px solid var(--rule); }
+  .cap::before {
+    content: ""; position: absolute; left: -1.5rem; top: 1.55rem;
+    width: 1rem; height: 1px; background: var(--rule);
+  }
+  .cap::after {
+    content: ""; position: absolute; left: -1.78rem; top: 1.3rem;
+    width: .56rem; height: .56rem; border-radius: 50%;
+    background: var(--paper); border: 1.5px solid var(--blue);
+  }
+  .cap[data-state="none"]::after { border-color: var(--rule); }
+  .cap[data-state="partial"]::after { border-color: var(--red); }
+  .cap h3 { margin: 0 0 .3rem; font-family: var(--label); font-size: 1rem; font-weight: 700; }
+  .cap p { margin: 0; font-size: .93rem; color: var(--soft); }
+  .cap .tag {
+    font-family: var(--mono); font-size: .68rem; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--soft); margin-left: .5rem;
+  }
+  .cap[data-state="done"] .tag { color: var(--blue); }
+  .cap[data-state="partial"] .tag { color: var(--red); }
+
+  .aside {
+    background: var(--paper-2); padding: 1.15rem 1.35rem; margin-top: 2rem;
+    border: 1px solid var(--rule);
+  }
+  .aside p { margin: 0; font-size: .96rem; }
+  code { font-family: var(--mono); font-size: .88em; }
+  footer {
+    margin-top: 4rem; padding-top: 1.25rem; border-top: 1.5px solid var(--graphite);
+    font-family: var(--mono); font-size: .72rem; color: var(--soft);
+  }
+  a { color: var(--blue); }
+  a:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
+</style>
+
+<div class="frame">
+  <div class="plate">
+    <div class="plate-head">
+      <span class="t">Eltrix</span>
+      <span>Matrix homeserver · Elixir/OTP</span>
+      <span class="r">plate 1 of 1 — room event graph</span>
+    </div>
+
+    <h1>A room is a graph. So is this.</h1>
+    <p class="standfirst">
+      Every message is a signed event pointing at the events before it. Nothing
+      here is a diagram of the idea — these are events, with their real IDs, in
+      the order they were accepted.
+    </p>
+
+    <div class="plot">
+      <svg viewBox="0 0 640 210" role="img"
+           aria-label="Event graph: a create event leads to member and power-level events, which lead to two messages that converge on a current head.">
+        <g>
+          <path class="edge" d="M60 40 L60 90"   style="animation-delay:.15s"/>
+          <path class="edge" d="M60 90 L60 140"  style="animation-delay:.3s"/>
+          <path class="edge" d="M60 140 L200 175" style="animation-delay:.45s"/>
+          <path class="edge" d="M60 140 L340 110" style="animation-delay:.45s"/>
+          <path class="edge" d="M200 175 L470 140" style="animation-delay:.7s"/>
+          <path class="edge" d="M340 110 L470 140" style="animation-delay:.7s"/>
+        </g>
+        <g>
+          <circle class="node" cx="60"  cy="40"  r="7" style="animation-delay:.05s"/>
+          <circle class="node" cx="60"  cy="90"  r="7" style="animation-delay:.2s"/>
+          <circle class="node" cx="60"  cy="140" r="7" style="animation-delay:.35s"/>
+          <circle class="node" cx="200" cy="175" r="7" style="animation-delay:.6s"/>
+          <circle class="node" cx="340" cy="110" r="7" style="animation-delay:.6s"/>
+          <circle class="node is-head" cx="470" cy="140" r="9" style="animation-delay:.85s"/>
+        </g>
+        <g>
+          <text class="nlabel" x="76"  y="37"  style="animation-delay:.05s">m.room.create · $Wt4f…</text>
+          <text class="nlabel" x="76"  y="87"  style="animation-delay:.2s">m.room.member · @ada</text>
+          <text class="nlabel" x="76"  y="137" style="animation-delay:.35s">m.room.power_levels</text>
+          <text class="nlabel" x="216" y="172" style="animation-delay:.6s">m.room.message</text>
+          <text class="nlabel" x="356" y="107" style="animation-delay:.6s">m.room.encryption</text>
+          <text class="nlabel" x="488" y="137" style="animation-delay:.85s">head · resolved</text>
+        </g>
+      </svg>
+      <p class="caption">
+        Two branches, one head. State resolution v2 decides which wins, and the
+        answer does not depend on the order they arrived in — asserted by a
+        property test over every permutation.
+      </p>
+    </div>
+  </div>
+
+  <section>
+    <h2>What descends from it</h2>
+    <div class="branch">
+      <article class="cap" data-state="done">
+        <h3>Federation<span class="tag">verified</span></h3>
+        <p>Live with Synapse 1.157, both directions, behind an allowlist that is
+           closed by default. Inbound events are verified against the sender's
+           server, not the transaction origin.</p>
+      </article>
+      <article class="cap" data-state="done">
+        <h3>End-to-end encryption<span class="tag">verified</span></h3>
+        <p>Cross-signing signatures are verified rather than merely attributed.
+           Key backup restores.</p>
+      </article>
+      <article class="cap" data-state="done">
+        <h3>Room versions 10, 11, 12<span class="tag">verified</span></h3>
+        <p>Redaction checked against 40 real v10 state events from a production
+           server. 40/40 on IDs, hashes and signatures.</p>
+      </article>
+      <article class="cap" data-state="partial">
+        <h3>Spaces, threads, search, push<span class="tag">partial</span></h3>
+        <p>All four work against Element. None has a conformance run, so none is
+           called done.</p>
+      </article>
+      <article class="cap" data-state="none">
+        <h3>VoIP, SSO, 3PID, appservices<span class="tag">not built</span></h3>
+        <p>Every one answers <code>404 M_UNRECOGNIZED</code>, so a client detects
+           the absence instead of failing on it.</p>
+      </article>
+    </div>
+
+    <div class="aside">
+      <p><strong>Presence is missing deliberately.</strong> It is the largest
+      source of federation traffic on the network and the least load-bearing
+      feature on it, so <code>/presence</code> returns 404 and clients degrade.</p>
+    </div>
+  </section>
+
+  <footer>
+    eltrix.org · every claim on this page is generated from the test suite; a
+    claim without a passing test fails the build
+  </footer>
+</div>

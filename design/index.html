@@ -1,0 +1,99 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eltrix — three design directions to choose between</title>
+<style>
+  :root {
+    --bg: #FAFAF9; --fg: #1A1A19; --soft: #57564F; --rule: #D6D4CE; --link: #2A4A7F;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #131312; --fg: #EDEBE6; --soft: #9C998F; --rule: #302F2B; --link: #9DBBEC; }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--fg);
+    font: 16px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  main { max-width: 54rem; margin: 0 auto; padding: 3rem 1.25rem 5rem; }
+  h1 { font-size: 1.9rem; line-height: 1.2; margin: 0 0 .6rem; }
+  .lede { color: var(--soft); margin: 0 0 2.5rem; max-width: 60ch; }
+  h2 { font-size: 1.15rem; margin: 0 0 .35rem; }
+  .card {
+    border: 1px solid var(--rule); border-radius: 4px;
+    padding: 1.35rem 1.4rem; margin-bottom: 1rem;
+  }
+  .card p { margin: .4rem 0 0; color: var(--soft); }
+  .card .risk { color: var(--fg); }
+  .meta {
+    font-family: var(--mono); font-size: .72rem; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--soft); margin: 0 0 .5rem;
+  }
+  a { color: var(--link); }
+  a:focus-visible { outline: 2px solid var(--link); outline-offset: 3px; }
+  .checks { border-top: 1px solid var(--rule); margin-top: 2.5rem; padding-top: 1.5rem; }
+  .checks li { color: var(--soft); margin-bottom: .3rem; }
+  code { font-family: var(--mono); font-size: .88em; }
+</style>
+
+<main>
+  <h1>Three directions, same content</h1>
+  <p class="lede">
+    GOAL.md §5.2 asks for three genuinely different designs built as real pages,
+    compared, and then one picked — so the choice is between viable options rather
+    than between a pretty one and a usable one. All three carry identical content
+    and meet the accessibility bar below. The pick is yours; the losers get deleted
+    rather than kept as dead alternates.
+  </p>
+
+  <article class="card">
+    <p class="meta">Direction A</p>
+    <h2><a href="a-record.html">The record</a></h2>
+    <p>The page is a signed document. Every capability is a line item and every
+      line item carries its evidence directly beneath it — you cannot read a claim
+      here without seeing what backs it.</p>
+    <p class="risk"><strong>The risk:</strong> it ends in a signing block and opens
+      with a digest rather than a promise. It reads as a document, not a pitch.</p>
+  </article>
+
+  <article class="card">
+    <p class="meta">Direction B</p>
+    <h2><a href="b-graph.html">The graph</a></h2>
+    <p>A Matrix room <em>is</em> a directed acyclic graph of signed events, so the
+      hero is that graph, drawn in two inks as a pen plotter would draw it. The
+      capabilities hang off it as branches.</p>
+    <p class="risk"><strong>The risk:</strong> the first thing a visitor meets is a
+      technical drawing that animates itself. It assumes the reader is interested
+      in how Matrix actually works.</p>
+  </article>
+
+  <article class="card">
+    <p class="meta">Direction C</p>
+    <h2><a href="c-panel.html">The panel</a></h2>
+    <p>This is equipment you run, not a product you buy. A control surface in warm
+      metal and bakelite, with a bank of indicator lamps wired to the same status
+      file the build gates on: lit, half-lit, dark.</p>
+    <p class="risk"><strong>The risk:</strong> skeuomorphism. It commits to a
+      physical instrument, which is either characterful or dated depending on your
+      taste — which is exactly why it is one of three rather than the only one.</p>
+  </article>
+
+  <section class="checks">
+    <p class="meta">Verified on all three, measured rather than eyeballed</p>
+    <ul>
+      <li>WCAG AA on every text/background pair, computed in the browser at both
+        colour schemes — not judged by eye</li>
+      <li>No horizontal overflow at 320px</li>
+      <li>Zero external requests: no CDN fonts, scripts or styles</li>
+      <li><code>prefers-reduced-motion</code> respected; direction B is the only
+        one with motion at all, and it stops there</li>
+      <li>Visible keyboard focus, landmarks, and lamp states that never rely on
+        colour alone</li>
+    </ul>
+    <p style="color:var(--soft)">
+      Still to do for whichever wins: Lighthouse ≥95, the Live Room streaming from
+      a real public room over LiveView, and wiring the copy to
+      <code>status.json</code> so a claim whose status is not <code>done</code>
+      fails the build.
+    </p>
+  </section>
+</main>
