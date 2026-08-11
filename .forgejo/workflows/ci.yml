@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [beta, main]
+    tags: ["v*"]
+  pull_request:
+    branches: [beta, main]
+  workflow_dispatch:
+
+jobs:
+  # The gate is the `mix ci` alias in mix.exs, exactly as in eltrix_server. CI
+  # runs that and nothing else, so a green local run means a green PR and there
+  # is no second, weaker definition of passing living in this file.
+  #
+  # No database service: this site has no Ecto repo. It reads two vendored
+  # artefacts and renders them.
+  check:
+    name: Quality gate
+    runs-on: ubuntu-22.04
+    # jlxq0, not julian. A wrong owner does not error usefully — the runner
+    # dies at image pull before any step, so every job fails identically.
+    container:
+      image: forge.oddie.app/jlxq0/ci-elixir:1.19.5-otp-28
+      credentials:
+        username: jlxq0
+        password: ${{ secrets.FORGE_PUSH_TOKEN }}
+    env:
+      MIX_ENV: test
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache deps and build
+        uses: actions/cache@v4
+        with:
+          path: |
+            deps
+            _build
+          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+          restore-keys: ${{ runner.os }}-mix-
+
+      - name: Fetch dependencies
+        run: mix deps.get
+
+      - name: Quality gate
+        run: mix ci

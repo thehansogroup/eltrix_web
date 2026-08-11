@@ -1,0 +1,53 @@
+<div class="wrap">
+  <h1>A Matrix homeserver in Elixir</h1>
+  <p class="lede">
+    Eltrix is a homeserver built on the BEAM, where a room is a process and a
+    sync is a parked one. This page is generated from the project's own test
+    status: nothing below is here because somebody wrote it down.
+  </p>
+
+  <div class="note">
+    <p>
+      <strong>The build fails if this page claims what the tests do not back.</strong>
+    </p>
+    <p>
+      Each line carries a key into <code>status.json</code>, which is generated
+      from the criteria the project holds itself to. A capability that slips
+      from finished to partial stops the site compiling until the wording
+      changes. The list of what is <em>not</em> done is rendered from the same
+      file, so it cannot be quietly dropped.
+    </p>
+  </div>
+
+  <h2>What works</h2>
+  <ul class="caps">
+    <li :for={cap <- @works}>
+      <h3>{cap.title}</h3>
+      <span class="status done">done</span>
+      <p>{cap.body}</p>
+    </li>
+  </ul>
+
+  <h2>What does not, yet</h2>
+  <p class="lede">
+    Partial means some of it is built and it is not finished. None means it is
+    not there at all, and asking for it returns a 404 so a client can detect
+    the absence rather than meet a broken feature.
+  </p>
+  <ul class="caps">
+    <li :for={cap <- @absent}>
+      <h3>{cap.title}</h3>
+      <span class={"status #{cap.status}"}>{cap.status}</span>
+    </li>
+  </ul>
+
+  <h2>Running it</h2>
+  <p>
+    Registration is by invitation. Before there is an account on this server
+    that is not the operator's, the <.link navigate={~p"/terms"}>terms</.link>,
+    the <.link navigate={~p"/privacy"}>privacy policy</.link>
+    and a working <.link navigate={~p"/abuse"}>way to report abuse</.link>
+    have to exist —
+    which is why they are published here rather than written when first needed.
+  </p>
+</div>

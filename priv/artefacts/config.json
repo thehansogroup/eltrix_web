@@ -1,0 +1,249 @@
+{
+  "settings": [
+    {
+      "default": "localhost",
+      "name": "ELTRIX_DOMAIN",
+      "required": "prod",
+      "purpose": "The Matrix `server_name`. Appears in every user ID and every event signature, so it is permanent by construction: events signed under one name can never be re-signed under another. Different from PHX_HOST.",
+      "secret": false
+    },
+    {
+      "default": null,
+      "name": "PHX_HOST",
+      "required": "prod",
+      "purpose": "The hostname the listener answers on. An address, not an identity — it never reaches a user ID. On www it differs from ELTRIX_DOMAIN because the apex delegates; on beta the two are equal because it does not.",
+      "secret": false
+    },
+    {
+      "default": null,
+      "name": "PHX_SERVER",
+      "required": "prod",
+      "purpose": "Set to start the web listener. A release without it boots and serves nothing.",
+      "secret": false
+    },
+    {
+      "default": "4000",
+      "name": "PORT",
+      "required": "never",
+      "purpose": "The one listener for client, federation and key APIs. TLS terminates at the edge, so this is plain HTTP.",
+      "secret": false
+    },
+    {
+      "default": "9568",
+      "name": "METRICS_PORT",
+      "required": "never",
+      "purpose": "A separate listener for Prometheus metrics, so they are never publicly routed by sharing a port with the API.",
+      "secret": false
+    },
+    {
+      "default": null,
+      "name": "SECRET_KEY_BASE",
+      "required": "prod",
+      "purpose": "Signs and encrypts session cookies and tokens.",
+      "secret": true
+    },
+    {
+      "default": null,
+      "name": "DATABASE_URL",
+      "required": "prod",
+      "purpose": "The Postgres connection URL. Note the pooler: production points at postgres-pooler-rw, which is shared with every other product on the cluster, so a transaction held open elsewhere is visible to us.",
+      "secret": true
+    },
+    {
+      "default": "10",
+      "name": "POOL_SIZE",
+      "required": "never",
+      "purpose": "Database connections held open per node. Sync is a long poll, so this bounds concurrent syncs as much as it bounds queries.",
+      "secret": false
+    },
+    {
+      "default": null,
+      "name": "ECTO_IPV6",
+      "required": "never",
+      "purpose": "Connect to Postgres over IPv6. Needed where the cluster has no IPv4 path.",
+      "secret": false
+    },
+    {
+      "default": null,
+      "name": "CLUSTER_DNS_QUERY",
+      "required": "never",
+      "purpose": "Headless Service DNS name whose A records are the other pods, for BEAM clustering. Unset means no topology at all, so the node never looks for peers — the correct default while replicas are 1.",
+      "secret": false
+    },
+    {
+      "default": "eltrix",
+      "name": "CLUSTER_NODE_BASENAME",
+      "required": "never",
+      "purpose": "The part before the @ in each node name. It has to match what the release sets as RELEASE_NODE, or the strategy builds names nothing answers to and reports no error at all.",
+      "secret": false
+    },
+    {
+      "default": "true",
+      "name": "REGISTRATION_ENABLED",
+      "required": "never",
+      "purpose": "Set to `false` to refuse every registration, invitation or not.",
+      "secret": false
+    },
+    {
+      "default": "true in prod, false in dev and test",
+      "name": "REGISTRATION_REQUIRES_TOKEN",
+      "required": "never",
+      "purpose": "Registration needs an invitation from /admin/invites. Defaults to `true` in prod: a deployment that sets nothing must not be an open server. It defaulted to `false` once, and a publicly reachable homeserver was open for six minutes.",
+      "secret": false
+    },
+    {
+      "default": null,
+      "name": "FEDERATION_ENABLED",
+      "required": "never",
+      "purpose": "Whether the federation API exists at all. Off means every federation endpoint answers 404 M_UNRECOGNIZED, which is how a peer feature-detects a server that does not federate. Separate from an empty allowlist.",
+      "secret": false
+    },
+    {
+      "default": "empty, which refuses every server",
+      "name": "FEDERATION_ALLOWLIST",
+      "required": "never",
+      "purpose": "Comma-separated server names that may send to us or be dialled by us (D3). Unset refuses everyone — the opposite default would turn a missing variable into open federation. Exactly `*` federates with the whole network, which is a deliberate act and is logged as a warning at boot.",
+      "secret": false
+    },
+    {
+      "default": "empty, which dials only public addresses",
+      "name": "FEDERATION_IP_ALLOWLIST",
+      "required": "never",
+      "purpose": "Comma-separated CIDRs a federation request may be dialled into despite not being routable on the public internet. Empty by default, which is the SSRF guard doing its job; needed when a peer is on the same private network, and by the conformance harness.",
+      "secret": false
+    },
+    {
+      "default": "the compiled default, which is `info` in production",
+      "name": "LOG_LEVEL",
+      "required": "never",
+      "purpose": "The minimum level written to the log. `info` is what makes the federation refusal line visible — a refused peer is an ordinary event on a public endpoint rather than a fault, so it is not a warning.",
+      "secret": false
+    },
+    {
+      "default": null,
+      "name": "MEDIA_S3_ENDPOINT",
+      "required": "prod",
+      "purpose": "The S3-compatible object store media lives in. Required in prod: a deployment with nowhere to put media is misconfigured whether or not anybody has uploaded anything, and it used to fail as a 500 on the first upload instead of at boot.",
+      "secret": false
+    },
+    {
+      "default": null,
+      "name": "MEDIA_S3_BUCKET",
+      "required": "prod",
+      "purpose": "Bucket the media objects live in. SigV4 signs it, so it cannot be changed by rewriting a URL, and the gateway allowlists it separately.",
+      "secret": false
+    },
+    {
+      "default": "garage",
+      "name": "MEDIA_S3_REGION",
+      "required": "never",
+      "purpose": "SigV4 region. Garage does not use it for placement but signs it.",
+      "secret": false
+    },
+    {
+      "default": null,
+      "name": "MEDIA_S3_ACCESS_KEY_ID",
+      "required": "prod",
+      "purpose": "Object storage key, scoped to the one bucket with owner false, so the application cannot change bucket settings even if the key leaks.",
+      "secret": true
+    },
+    {
+      "default": null,
+      "name": "MEDIA_S3_SECRET_ACCESS_KEY",
+      "required": "prod",
+      "purpose": "Secret half of the object storage key pair. Never logged and never rendered into the generated configuration table.",
+      "secret": true
+    },
+    {
+      "default": null,
+      "name": "ELTRIX_TLS_CERTFILE",
+      "required": "never",
+      "purpose": "Certificate for a second listener that speaks TLS. Production terminates TLS at the edge and sets none of these; the conformance harness sets them because it expects federation on its own certificate.",
+      "secret": false
+    },
+    {
+      "default": null,
+      "name": "ELTRIX_TLS_KEYFILE",
+      "required": "never",
+      "purpose": "Private key for that certificate. Required whenever the certificate is set.",
+      "secret": true
+    },
+    {
+      "default": "8448",
+      "name": "ELTRIX_TLS_PORT",
+      "required": "never",
+      "purpose": "Port for the TLS listener. 8448 is the Matrix federation default, which is what the conformance harness expects.",
+      "secret": false
+    },
+    {
+      "default": "1 in prod, 40 in dev",
+      "name": "RATE_LIMIT_ALLOWANCE",
+      "required": "never",
+      "purpose": "Multiplies every rate-limit window. 1 in production, 40 in dev where there are no strangers, and higher in the conformance harness, which registers dozens of accounts in seconds and would otherwise fail tests on a 429 during their setup.",
+      "secret": false
+    },
+    {
+      "default": null,
+      "name": "APPSERVICE_REGISTRATIONS",
+      "required": "never",
+      "purpose": "Colon-separated paths to application-service registration files (§4.2.6). Read once at boot and never written by the server: a bridge that could register itself could grant itself a namespace, and the namespace is the authorisation. Unset means no services, which is inert; a file that is present and unparseable is fatal, because a bridge with silently no namespace fails in a way neither end can see.",
+      "secret": false
+    },
+    {
+      "default": null,
+      "name": "SMTP_RELAY",
+      "required": "never",
+      "purpose": "SMTP relay for 3PID verification and password-reset mail (§4.2.1). Postal, not Postmark, and that is a domain fact rather than a preference: the eltrix.org zone allows only Stalwart and Postal to send as it, with DMARC p=reject, so Postmark mail fails DMARC at every recipient and arrives nowhere. Unset means 3PID cannot send; everything else still works.",
+      "secret": false
+    },
+    {
+      "default": "25",
+      "name": "SMTP_PORT",
+      "required": "never",
+      "purpose": "Where the relay listens. 25 in-cluster rather than 587, because this is a submission to our own Postal over the pod network and not a hop across the internet; TLS is still required on it (see SMTP_TLS_SERVER_NAME).",
+      "secret": false
+    },
+    {
+      "default": null,
+      "name": "SMTP_USERNAME",
+      "required": "never",
+      "purpose": "The Postal credential, written `organisation/server` — it names a mail server inside Postal rather than a person, and which one decides which domains the mail may claim to be from.",
+      "secret": false
+    },
+    {
+      "default": null,
+      "name": "SMTP_PASSWORD",
+      "required": "never",
+      "purpose": "The key belonging to that credential. Rotating it in Postal without updating this stops 3PID mail and nothing else, so the symptom is a verification code that never arrives.",
+      "secret": true
+    },
+    {
+      "default": "smtp.postal.oddie.app",
+      "name": "SMTP_TLS_SERVER_NAME",
+      "required": "never",
+      "purpose": "The hostname the relay's certificate is issued for. Named explicitly because the relay is reached at its in-cluster Service name while its certificate is for smtp.postal.oddie.app; without it verification fails on a name mismatch and every send is refused by our own side, which looks exactly like a credential problem.",
+      "secret": false
+    },
+    {
+      "default": "noreply@eltrix.org",
+      "name": "MAIL_FROM",
+      "required": "never",
+      "purpose": "The address verification mail is sent from. The app's own domain, never a shared one — a code that arrives from somewhere unrelated to the server reads as phishing, which is exactly what it would be teaching people to accept.",
+      "secret": false
+    },
+    {
+      "default": "Eltrix",
+      "name": "MAIL_FROM_NAME",
+      "required": "never",
+      "purpose": "The display name on verification mail.",
+      "secret": false
+    },
+    {
+      "default": "the module default in Eltrix.Media",
+      "name": "MEDIA_MAX_UPLOAD_BYTES",
+      "required": "never",
+      "purpose": "Largest upload accepted, advertised to clients through /_matrix/media/v3/config, so raising it is all a client needs.",
+      "secret": false
+    }
+  ]
+}

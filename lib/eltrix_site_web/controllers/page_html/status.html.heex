@@ -1,0 +1,15 @@
+<div class="wrap">
+  <h1>Status</h1>
+  <p class="lede">
+    Every capability key the project tracks, and what its own criteria say
+    about it. Generated from <code>GOAL.md</code>'s checkboxes; this page has no
+    second opinion.
+  </p>
+
+  <ul class="caps">
+    <li :for={row <- @rows}>
+      <h3>{row.title}</h3>
+      <span class={"status #{row.status}"}>{row.status}</span>
+    </li>
+  </ul>
+</div>

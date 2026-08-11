@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content={get_csrf_token()} />
+    <meta
+      name="description"
+      content="Eltrix is a Matrix homeserver written in Elixir. This site is generated from the project's own test status."
+    />
+    <.live_title default="Eltrix" suffix=" · Eltrix">{assigns[:page_title]}</.live_title>
+    <link phx-track-static rel="stylesheet" href={~p"/assets/css/app.css"} />
+    <%!--
+      No inline theme script.
+
+      The generator ships one that reads localStorage and stamps data-theme
+      before paint. It is dropped here for two reasons: this site has no theme
+      toggle — it follows prefers-color-scheme and nothing else — and an inline
+      script is exactly what the server's own CSP forbids, a rule that cost a
+      round when the web client shipped its module inline. Nothing here needs
+      JavaScript to render.
+    --%>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <header class="masthead">
+      <div class="wrap">
+        <a class="brand" href={~p"/"}>eltrix</a>
+        <nav class="top" aria-label="Primary">
+          <.link navigate={~p"/status"}>Status</.link>
+          <.link navigate={~p"/terms"}>Terms</.link>
+          <.link navigate={~p"/privacy"}>Privacy</.link>
+          <.link navigate={~p"/abuse"}>Report abuse</.link>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      {@inner_content}
+    </main>
+
+    <footer class="foot">
+      <div class="wrap">
+        <nav aria-label="Secondary">
+          <.link navigate={~p"/status"}>Status</.link>
+          <.link navigate={~p"/terms"}>Terms</.link>
+          <.link navigate={~p"/privacy"}>Privacy</.link>
+          <.link navigate={~p"/abuse"}>Report abuse</.link>
+          <.link navigate={~p"/imprint"}>Imprint</.link>
+        </nav>
+        <p>
+          Eltrix is a Matrix homeserver written in Elixir. The capability
+          statuses on this site are generated from the project's own criteria,
+          and the build fails if a page claims more than they say.
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

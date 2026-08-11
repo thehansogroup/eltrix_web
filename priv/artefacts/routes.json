@@ -1,0 +1,1069 @@
+{
+  "routes": [
+    {
+      "path": "/",
+      "controller": "EltrixWeb.PageController.home",
+      "method": "GET"
+    },
+    {
+      "path": "/.well-known/matrix/client",
+      "controller": "EltrixWeb.Matrix.DiscoveryController.well_known_client",
+      "method": "GET"
+    },
+    {
+      "path": "/.well-known/matrix/server",
+      "controller": "EltrixWeb.Matrix.DiscoveryController.well_known_server",
+      "method": "GET"
+    },
+    {
+      "path": "/_eltrix/admin/v1/deactivate/:user_id",
+      "controller": "EltrixWeb.Admin.AdminController.deactivate_user",
+      "method": "POST"
+    },
+    {
+      "path": "/_eltrix/admin/v1/media",
+      "controller": "EltrixWeb.Admin.AdminController.list_media",
+      "method": "GET"
+    },
+    {
+      "path": "/_eltrix/admin/v1/media/:server_name/:media_id",
+      "controller": "EltrixWeb.Admin.AdminController.delete_media",
+      "method": "DELETE"
+    },
+    {
+      "path": "/_eltrix/admin/v1/registration_tokens",
+      "controller": "EltrixWeb.Admin.AdminController.list_registration_tokens",
+      "method": "GET"
+    },
+    {
+      "path": "/_eltrix/admin/v1/registration_tokens/:token",
+      "controller": "EltrixWeb.Admin.AdminController.delete_registration_token",
+      "method": "DELETE"
+    },
+    {
+      "path": "/_eltrix/admin/v1/registration_tokens/new",
+      "controller": "EltrixWeb.Admin.AdminController.create_registration_token",
+      "method": "POST"
+    },
+    {
+      "path": "/_eltrix/admin/v1/reset_password/:user_id",
+      "controller": "EltrixWeb.Admin.AdminController.reset_password",
+      "method": "POST"
+    },
+    {
+      "path": "/_eltrix/admin/v1/rooms",
+      "controller": "EltrixWeb.Admin.AdminController.list_rooms",
+      "method": "GET"
+    },
+    {
+      "path": "/_eltrix/admin/v1/rooms/:room_id",
+      "controller": "EltrixWeb.Admin.AdminController.delete_room",
+      "method": "DELETE"
+    },
+    {
+      "path": "/_eltrix/admin/v1/rooms/:room_id",
+      "controller": "EltrixWeb.Admin.AdminController.show_room",
+      "method": "GET"
+    },
+    {
+      "path": "/_eltrix/admin/v1/server_version",
+      "controller": "EltrixWeb.Admin.AdminController.server_version",
+      "method": "GET"
+    },
+    {
+      "path": "/_eltrix/admin/v1/statistics",
+      "controller": "EltrixWeb.Admin.AdminController.statistics",
+      "method": "GET"
+    },
+    {
+      "path": "/_eltrix/admin/v1/statistics/activity",
+      "controller": "EltrixWeb.Admin.AdminController.activity",
+      "method": "GET"
+    },
+    {
+      "path": "/_eltrix/admin/v1/statistics/users/media",
+      "controller": "EltrixWeb.Admin.AdminController.media_by_user",
+      "method": "GET"
+    },
+    {
+      "path": "/_eltrix/admin/v1/users",
+      "controller": "EltrixWeb.Admin.AdminController.list_users",
+      "method": "GET"
+    },
+    {
+      "path": "/_eltrix/admin/v1/users/:user_id",
+      "controller": "EltrixWeb.Admin.AdminController.show_user",
+      "method": "GET"
+    },
+    {
+      "path": "/_eltrix/admin/v1/users/:user_id",
+      "controller": "EltrixWeb.Admin.AdminController.update_user",
+      "method": "PUT"
+    },
+    {
+      "path": "/_eltrix/client/v1/account/export",
+      "controller": "EltrixWeb.Eltrix.ExportController.show",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/*path",
+      "controller": "EltrixWeb.Matrix.FallbackController.unrecognized",
+      "method": "*"
+    },
+    {
+      "path": "/_matrix/client/*path",
+      "controller": "EltrixWeb.Matrix.CorsController.preflight",
+      "method": "OPTIONS"
+    },
+    {
+      "path": "/_matrix/client/unstable/org.matrix.simplified_msc3575/sync",
+      "controller": "EltrixWeb.Matrix.SlidingSyncController.sync",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v1/appservice/:appservice_id/ping",
+      "controller": "EltrixWeb.Matrix.AppserviceController.ping",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v1/media/config",
+      "controller": "EltrixWeb.Matrix.MediaController.config",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v1/media/download/:server_name/:media_id",
+      "controller": "EltrixWeb.Matrix.MediaController.download",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v1/media/download/:server_name/:media_id/:filename",
+      "controller": "EltrixWeb.Matrix.MediaController.download",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v1/media/thumbnail/:server_name/:media_id",
+      "controller": "EltrixWeb.Matrix.MediaController.thumbnail",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v1/register/m.login.registration_token/validity",
+      "controller": "EltrixWeb.Matrix.AuthController.token_validity",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v1/rooms/:room_id/hierarchy",
+      "controller": "EltrixWeb.Matrix.SpacesController.hierarchy",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v1/rooms/:room_id/relations/:event_id",
+      "controller": "EltrixWeb.Matrix.RoomController.relations",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v1/rooms/:room_id/relations/:event_id/:rel_type",
+      "controller": "EltrixWeb.Matrix.RoomController.relations",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v1/rooms/:room_id/relations/:event_id/:rel_type/:event_type",
+      "controller": "EltrixWeb.Matrix.RoomController.relations",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v1/rooms/:room_id/threads",
+      "controller": "EltrixWeb.Matrix.RoomController.threads",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/account/3pid",
+      "controller": "EltrixWeb.Matrix.ThreePidController.index",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/account/3pid/add",
+      "controller": "EltrixWeb.Matrix.ThreePidController.add",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/account/3pid/delete",
+      "controller": "EltrixWeb.Matrix.ThreePidController.delete",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/account/3pid/email/requestToken",
+      "controller": "EltrixWeb.Matrix.ThreePidController.add_token",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/account/3pid/msisdn/requestToken",
+      "controller": "EltrixWeb.Matrix.ThreePidController.msisdn",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/account/deactivate",
+      "controller": "EltrixWeb.Matrix.AuthController.deactivate",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/account/password",
+      "controller": "EltrixWeb.Matrix.AuthController.change_password",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/account/password/email/requestToken",
+      "controller": "EltrixWeb.Matrix.ThreePidController.reset_token",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/account/password/msisdn/requestToken",
+      "controller": "EltrixWeb.Matrix.ThreePidController.msisdn",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/account/whoami",
+      "controller": "EltrixWeb.Matrix.AuthController.whoami",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/capabilities",
+      "controller": "EltrixWeb.Matrix.DiscoveryController.capabilities",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/createRoom",
+      "controller": "EltrixWeb.Matrix.RoomController.create",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/devices",
+      "controller": "EltrixWeb.Matrix.DeviceController.index",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/devices/:device_id",
+      "controller": "EltrixWeb.Matrix.DeviceController.delete",
+      "method": "DELETE"
+    },
+    {
+      "path": "/_matrix/client/v3/devices/:device_id",
+      "controller": "EltrixWeb.Matrix.DeviceController.show",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/devices/:device_id",
+      "controller": "EltrixWeb.Matrix.DeviceController.update",
+      "method": "PUT"
+    },
+    {
+      "path": "/_matrix/client/v3/directory/list/room/:room_id",
+      "controller": "EltrixWeb.Matrix.DirectoryController.visibility",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/directory/list/room/:room_id",
+      "controller": "EltrixWeb.Matrix.DirectoryController.set_visibility",
+      "method": "PUT"
+    },
+    {
+      "path": "/_matrix/client/v3/directory/room/:room_alias",
+      "controller": "EltrixWeb.Matrix.DirectoryController.delete_alias",
+      "method": "DELETE"
+    },
+    {
+      "path": "/_matrix/client/v3/directory/room/:room_alias",
+      "controller": "EltrixWeb.Matrix.DirectoryController.resolve",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/directory/room/:room_alias",
+      "controller": "EltrixWeb.Matrix.DirectoryController.create_alias",
+      "method": "PUT"
+    },
+    {
+      "path": "/_matrix/client/v3/join/:room_id",
+      "controller": "EltrixWeb.Matrix.RoomController.join",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/joined_rooms",
+      "controller": "EltrixWeb.Matrix.RoomController.joined_rooms",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/keys/changes",
+      "controller": "EltrixWeb.Matrix.KeysController.changes",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/keys/claim",
+      "controller": "EltrixWeb.Matrix.KeysController.claim",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/keys/device_signing/upload",
+      "controller": "EltrixWeb.Matrix.KeysController.device_signing",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/keys/query",
+      "controller": "EltrixWeb.Matrix.KeysController.query",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/keys/signatures/upload",
+      "controller": "EltrixWeb.Matrix.KeysController.signatures",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/keys/upload",
+      "controller": "EltrixWeb.Matrix.KeysController.upload",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/login",
+      "controller": "EltrixWeb.Matrix.AuthController.login_flows",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/login",
+      "controller": "EltrixWeb.Matrix.AuthController.login",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/logout",
+      "controller": "EltrixWeb.Matrix.AuthController.logout",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/logout/all",
+      "controller": "EltrixWeb.Matrix.AuthController.logout_all",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/notifications",
+      "controller": "EltrixWeb.Matrix.NotificationsController.index",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/presence/:user_id/status",
+      "controller": "EltrixWeb.Matrix.PresenceController.show",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/presence/:user_id/status",
+      "controller": "EltrixWeb.Matrix.PresenceController.update",
+      "method": "PUT"
+    },
+    {
+      "path": "/_matrix/client/v3/profile/:user_id",
+      "controller": "EltrixWeb.Matrix.ProfileController.show",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/profile/:user_id/avatar_url",
+      "controller": "EltrixWeb.Matrix.ProfileController.avatar_url",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/profile/:user_id/avatar_url",
+      "controller": "EltrixWeb.Matrix.ProfileController.set_avatar_url",
+      "method": "PUT"
+    },
+    {
+      "path": "/_matrix/client/v3/profile/:user_id/displayname",
+      "controller": "EltrixWeb.Matrix.ProfileController.displayname",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/profile/:user_id/displayname",
+      "controller": "EltrixWeb.Matrix.ProfileController.set_displayname",
+      "method": "PUT"
+    },
+    {
+      "path": "/_matrix/client/v3/publicRooms",
+      "controller": "EltrixWeb.Matrix.DirectoryController.public_rooms",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/publicRooms",
+      "controller": "EltrixWeb.Matrix.DirectoryController.public_rooms",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/pushers",
+      "controller": "EltrixWeb.Matrix.PushRulesController.pushers",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/pushers/set",
+      "controller": "EltrixWeb.Matrix.PushRulesController.set_pusher",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/pushrules",
+      "controller": "EltrixWeb.Matrix.PushRulesController.index",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/pushrules/:scope/:kind",
+      "controller": "EltrixWeb.Matrix.PushRulesController.scoped",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/pushrules/:scope/:kind/:rule_id",
+      "controller": "EltrixWeb.Matrix.PushRulesController.delete",
+      "method": "DELETE"
+    },
+    {
+      "path": "/_matrix/client/v3/pushrules/:scope/:kind/:rule_id",
+      "controller": "EltrixWeb.Matrix.PushRulesController.show",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/pushrules/:scope/:kind/:rule_id",
+      "controller": "EltrixWeb.Matrix.PushRulesController.put",
+      "method": "PUT"
+    },
+    {
+      "path": "/_matrix/client/v3/pushrules/:scope/:kind/:rule_id/actions",
+      "controller": "EltrixWeb.Matrix.PushRulesController.actions",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/pushrules/:scope/:kind/:rule_id/actions",
+      "controller": "EltrixWeb.Matrix.PushRulesController.set_actions",
+      "method": "PUT"
+    },
+    {
+      "path": "/_matrix/client/v3/pushrules/:scope/:kind/:rule_id/enabled",
+      "controller": "EltrixWeb.Matrix.PushRulesController.enabled",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/pushrules/:scope/:kind/:rule_id/enabled",
+      "controller": "EltrixWeb.Matrix.PushRulesController.set_enabled",
+      "method": "PUT"
+    },
+    {
+      "path": "/_matrix/client/v3/refresh",
+      "controller": "EltrixWeb.Matrix.AuthController.refresh",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/register",
+      "controller": "EltrixWeb.Matrix.AuthController.register",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/register/available",
+      "controller": "EltrixWeb.Matrix.AuthController.available",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/register/email/requestToken",
+      "controller": "EltrixWeb.Matrix.ThreePidController.register_token",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/register/msisdn/requestToken",
+      "controller": "EltrixWeb.Matrix.ThreePidController.msisdn",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/room_keys/keys",
+      "controller": "EltrixWeb.Matrix.KeyBackupController.delete_keys",
+      "method": "DELETE"
+    },
+    {
+      "path": "/_matrix/client/v3/room_keys/keys",
+      "controller": "EltrixWeb.Matrix.KeyBackupController.get_keys",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/room_keys/keys",
+      "controller": "EltrixWeb.Matrix.KeyBackupController.put_keys",
+      "method": "PUT"
+    },
+    {
+      "path": "/_matrix/client/v3/room_keys/keys/:room_id",
+      "controller": "EltrixWeb.Matrix.KeyBackupController.delete_room_keys",
+      "method": "DELETE"
+    },
+    {
+      "path": "/_matrix/client/v3/room_keys/keys/:room_id",
+      "controller": "EltrixWeb.Matrix.KeyBackupController.get_room_keys",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/room_keys/keys/:room_id",
+      "controller": "EltrixWeb.Matrix.KeyBackupController.put_room_keys",
+      "method": "PUT"
+    },
+    {
+      "path": "/_matrix/client/v3/room_keys/keys/:room_id/:session_id",
+      "controller": "EltrixWeb.Matrix.KeyBackupController.delete_session_key",
+      "method": "DELETE"
+    },
+    {
+      "path": "/_matrix/client/v3/room_keys/keys/:room_id/:session_id",
+      "controller": "EltrixWeb.Matrix.KeyBackupController.get_session_key",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/room_keys/keys/:room_id/:session_id",
+      "controller": "EltrixWeb.Matrix.KeyBackupController.put_session_key",
+      "method": "PUT"
+    },
+    {
+      "path": "/_matrix/client/v3/room_keys/version",
+      "controller": "EltrixWeb.Matrix.KeyBackupController.current",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/room_keys/version",
+      "controller": "EltrixWeb.Matrix.KeyBackupController.create",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/room_keys/version/:version",
+      "controller": "EltrixWeb.Matrix.KeyBackupController.delete",
+      "method": "DELETE"
+    },
+    {
+      "path": "/_matrix/client/v3/room_keys/version/:version",
+      "controller": "EltrixWeb.Matrix.KeyBackupController.show",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/room_keys/version/:version",
+      "controller": "EltrixWeb.Matrix.KeyBackupController.update",
+      "method": "PUT"
+    },
+    {
+      "path": "/_matrix/client/v3/rooms/:room_id/aliases",
+      "controller": "EltrixWeb.Matrix.DirectoryController.room_aliases",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/rooms/:room_id/ban",
+      "controller": "EltrixWeb.Matrix.RoomController.ban",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/rooms/:room_id/context/:event_id",
+      "controller": "EltrixWeb.Matrix.RoomController.context",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/rooms/:room_id/event/:event_id",
+      "controller": "EltrixWeb.Matrix.RoomController.event",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/rooms/:room_id/forget",
+      "controller": "EltrixWeb.Matrix.RoomController.forget",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/rooms/:room_id/invite",
+      "controller": "EltrixWeb.Matrix.RoomController.invite",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/rooms/:room_id/join",
+      "controller": "EltrixWeb.Matrix.RoomController.join",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/rooms/:room_id/joined_members",
+      "controller": "EltrixWeb.Matrix.RoomController.joined_members",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/rooms/:room_id/kick",
+      "controller": "EltrixWeb.Matrix.RoomController.kick",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/rooms/:room_id/leave",
+      "controller": "EltrixWeb.Matrix.RoomController.leave",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/rooms/:room_id/members",
+      "controller": "EltrixWeb.Matrix.RoomController.members",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/rooms/:room_id/messages",
+      "controller": "EltrixWeb.Matrix.RoomController.messages",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/rooms/:room_id/read_markers",
+      "controller": "EltrixWeb.Matrix.EphemeralController.read_markers",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/rooms/:room_id/receipt/:receipt_type/:event_id",
+      "controller": "EltrixWeb.Matrix.EphemeralController.receipt",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/rooms/:room_id/redact/:event_id/:txn_id",
+      "controller": "EltrixWeb.Matrix.RoomController.redact",
+      "method": "PUT"
+    },
+    {
+      "path": "/_matrix/client/v3/rooms/:room_id/report",
+      "controller": "EltrixWeb.Matrix.ModerationController.report_room",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/rooms/:room_id/report/:event_id",
+      "controller": "EltrixWeb.Matrix.ModerationController.report_event",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/rooms/:room_id/send/:event_type/:txn_id",
+      "controller": "EltrixWeb.Matrix.RoomController.send_message",
+      "method": "PUT"
+    },
+    {
+      "path": "/_matrix/client/v3/rooms/:room_id/state",
+      "controller": "EltrixWeb.Matrix.RoomController.state",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/rooms/:room_id/state/:event_type",
+      "controller": "EltrixWeb.Matrix.RoomController.state_event",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/rooms/:room_id/state/:event_type",
+      "controller": "EltrixWeb.Matrix.RoomController.send_state",
+      "method": "PUT"
+    },
+    {
+      "path": "/_matrix/client/v3/rooms/:room_id/state/:event_type/*state_key",
+      "controller": "EltrixWeb.Matrix.RoomController.state_event",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/rooms/:room_id/state/:event_type/*state_key",
+      "controller": "EltrixWeb.Matrix.RoomController.send_state",
+      "method": "PUT"
+    },
+    {
+      "path": "/_matrix/client/v3/rooms/:room_id/typing/:user_id",
+      "controller": "EltrixWeb.Matrix.EphemeralController.typing",
+      "method": "PUT"
+    },
+    {
+      "path": "/_matrix/client/v3/rooms/:room_id/unban",
+      "controller": "EltrixWeb.Matrix.RoomController.unban",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/search",
+      "controller": "EltrixWeb.Matrix.SearchController.search",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/sendToDevice/:event_type/:txn_id",
+      "controller": "EltrixWeb.Matrix.ToDeviceController.send_to_device",
+      "method": "PUT"
+    },
+    {
+      "path": "/_matrix/client/v3/sync",
+      "controller": "EltrixWeb.Matrix.SyncController.sync",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/thirdparty/location",
+      "controller": "EltrixWeb.Matrix.ThirdPartyController.location",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/thirdparty/location/:protocol",
+      "controller": "EltrixWeb.Matrix.ThirdPartyController.location",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/thirdparty/protocol/:protocol",
+      "controller": "EltrixWeb.Matrix.ThirdPartyController.protocol",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/thirdparty/protocols",
+      "controller": "EltrixWeb.Matrix.ThirdPartyController.protocols",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/thirdparty/user",
+      "controller": "EltrixWeb.Matrix.ThirdPartyController.user",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/thirdparty/user/:protocol",
+      "controller": "EltrixWeb.Matrix.ThirdPartyController.user",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/user/:user_id/account_data/:type",
+      "controller": "EltrixWeb.Matrix.AccountDataController.show",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/user/:user_id/account_data/:type",
+      "controller": "EltrixWeb.Matrix.AccountDataController.update",
+      "method": "PUT"
+    },
+    {
+      "path": "/_matrix/client/v3/user/:user_id/filter",
+      "controller": "EltrixWeb.Matrix.FilterController.create",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/user/:user_id/filter/:filter_id",
+      "controller": "EltrixWeb.Matrix.FilterController.show",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/user/:user_id/rooms/:room_id/account_data/:type",
+      "controller": "EltrixWeb.Matrix.AccountDataController.show_room",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/user/:user_id/rooms/:room_id/account_data/:type",
+      "controller": "EltrixWeb.Matrix.AccountDataController.update_room",
+      "method": "PUT"
+    },
+    {
+      "path": "/_matrix/client/v3/user/:user_id/rooms/:room_id/tags",
+      "controller": "EltrixWeb.Matrix.TagsController.index",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/user/:user_id/rooms/:room_id/tags/:tag",
+      "controller": "EltrixWeb.Matrix.TagsController.delete",
+      "method": "DELETE"
+    },
+    {
+      "path": "/_matrix/client/v3/user/:user_id/rooms/:room_id/tags/:tag",
+      "controller": "EltrixWeb.Matrix.TagsController.put",
+      "method": "PUT"
+    },
+    {
+      "path": "/_matrix/client/v3/user_directory/search",
+      "controller": "EltrixWeb.Matrix.UserDirectoryController.search",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/versions",
+      "controller": "EltrixWeb.Matrix.DiscoveryController.versions",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/federation/v1/backfill/:room_id",
+      "controller": "EltrixWeb.Federation.FederationController.backfill",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/federation/v1/event/:event_id",
+      "controller": "EltrixWeb.Federation.FederationController.event",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/federation/v1/event_auth/:room_id/:event_id",
+      "controller": "EltrixWeb.Federation.FederationController.event_auth",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/federation/v1/get_missing_events/:room_id",
+      "controller": "EltrixWeb.Federation.FederationController.get_missing_events",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/federation/v1/make_join/:room_id/:user_id",
+      "controller": "EltrixWeb.Federation.MembershipController.make_join",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/federation/v1/make_leave/:room_id/:user_id",
+      "controller": "EltrixWeb.Federation.MembershipController.make_leave",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/federation/v1/media/download/:media_id",
+      "controller": "EltrixWeb.Federation.MediaController.download",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/federation/v1/media/thumbnail/:media_id",
+      "controller": "EltrixWeb.Federation.MediaController.thumbnail",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/federation/v1/publicRooms",
+      "controller": "EltrixWeb.Federation.QueryController.public_rooms",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/federation/v1/query/directory",
+      "controller": "EltrixWeb.Federation.QueryController.directory",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/federation/v1/query/profile",
+      "controller": "EltrixWeb.Federation.QueryController.profile",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/federation/v1/send/:txn_id",
+      "controller": "EltrixWeb.Federation.FederationController.send_transaction",
+      "method": "PUT"
+    },
+    {
+      "path": "/_matrix/federation/v1/state/:room_id",
+      "controller": "EltrixWeb.Federation.FederationController.state",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/federation/v1/state_ids/:room_id",
+      "controller": "EltrixWeb.Federation.FederationController.state_ids",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/federation/v1/user/devices/:user_id",
+      "controller": "EltrixWeb.Federation.QueryController.devices",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/federation/v1/user/keys/claim",
+      "controller": "EltrixWeb.Federation.QueryController.keys_claim",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/federation/v1/user/keys/query",
+      "controller": "EltrixWeb.Federation.QueryController.keys_query",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/federation/v1/version",
+      "controller": "EltrixWeb.Federation.FederationController.version",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/federation/v2/invite/:room_id/:event_id",
+      "controller": "EltrixWeb.Federation.MembershipController.invite",
+      "method": "PUT"
+    },
+    {
+      "path": "/_matrix/federation/v2/send_join/:room_id/:event_id",
+      "controller": "EltrixWeb.Federation.MembershipController.send_join",
+      "method": "PUT"
+    },
+    {
+      "path": "/_matrix/federation/v2/send_leave/:room_id/:event_id",
+      "controller": "EltrixWeb.Federation.MembershipController.send_leave",
+      "method": "PUT"
+    },
+    {
+      "path": "/_matrix/key/v2/server",
+      "controller": "EltrixWeb.Matrix.DiscoveryController.server_keys",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/media/v1/*path",
+      "controller": "EltrixWeb.Matrix.CorsController.preflight",
+      "method": "OPTIONS"
+    },
+    {
+      "path": "/_matrix/media/v1/create",
+      "controller": "EltrixWeb.Matrix.MediaController.create",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/media/v3/*path",
+      "controller": "EltrixWeb.Matrix.CorsController.preflight",
+      "method": "OPTIONS"
+    },
+    {
+      "path": "/_matrix/media/v3/config",
+      "controller": "EltrixWeb.Matrix.MediaController.config",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/media/v3/download/:server_name/:media_id",
+      "controller": "EltrixWeb.Matrix.MediaController.download",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/media/v3/download/:server_name/:media_id/:filename",
+      "controller": "EltrixWeb.Matrix.MediaController.download",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/media/v3/thumbnail/:server_name/:media_id",
+      "controller": "EltrixWeb.Matrix.MediaController.thumbnail",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/media/v3/upload",
+      "controller": "EltrixWeb.Matrix.MediaController.upload",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/media/v3/upload/:server_name/:media_id",
+      "controller": "EltrixWeb.Matrix.MediaController.upload_to",
+      "method": "PUT"
+    },
+    {
+      "path": "/_synapse/admin/v1/deactivate/:user_id",
+      "controller": "EltrixWeb.Admin.AdminController.deactivate_user",
+      "method": "POST"
+    },
+    {
+      "path": "/_synapse/admin/v1/media",
+      "controller": "EltrixWeb.Admin.AdminController.list_media",
+      "method": "GET"
+    },
+    {
+      "path": "/_synapse/admin/v1/media/:server_name/:media_id",
+      "controller": "EltrixWeb.Admin.AdminController.delete_media",
+      "method": "DELETE"
+    },
+    {
+      "path": "/_synapse/admin/v1/registration_tokens",
+      "controller": "EltrixWeb.Admin.AdminController.list_registration_tokens",
+      "method": "GET"
+    },
+    {
+      "path": "/_synapse/admin/v1/registration_tokens/:token",
+      "controller": "EltrixWeb.Admin.AdminController.delete_registration_token",
+      "method": "DELETE"
+    },
+    {
+      "path": "/_synapse/admin/v1/registration_tokens/new",
+      "controller": "EltrixWeb.Admin.AdminController.create_registration_token",
+      "method": "POST"
+    },
+    {
+      "path": "/_synapse/admin/v1/reset_password/:user_id",
+      "controller": "EltrixWeb.Admin.AdminController.reset_password",
+      "method": "POST"
+    },
+    {
+      "path": "/_synapse/admin/v1/rooms",
+      "controller": "EltrixWeb.Admin.AdminController.list_rooms",
+      "method": "GET"
+    },
+    {
+      "path": "/_synapse/admin/v1/rooms/:room_id",
+      "controller": "EltrixWeb.Admin.AdminController.delete_room",
+      "method": "DELETE"
+    },
+    {
+      "path": "/_synapse/admin/v1/rooms/:room_id",
+      "controller": "EltrixWeb.Admin.AdminController.show_room",
+      "method": "GET"
+    },
+    {
+      "path": "/_synapse/admin/v1/server_version",
+      "controller": "EltrixWeb.Admin.AdminController.server_version",
+      "method": "GET"
+    },
+    {
+      "path": "/_synapse/admin/v1/statistics",
+      "controller": "EltrixWeb.Admin.AdminController.statistics",
+      "method": "GET"
+    },
+    {
+      "path": "/_synapse/admin/v1/statistics/activity",
+      "controller": "EltrixWeb.Admin.AdminController.activity",
+      "method": "GET"
+    },
+    {
+      "path": "/_synapse/admin/v1/statistics/users/media",
+      "controller": "EltrixWeb.Admin.AdminController.media_by_user",
+      "method": "GET"
+    },
+    {
+      "path": "/_synapse/admin/v1/users",
+      "controller": "EltrixWeb.Admin.AdminController.list_users",
+      "method": "GET"
+    },
+    {
+      "path": "/_synapse/admin/v1/users/:user_id",
+      "controller": "EltrixWeb.Admin.AdminController.show_user",
+      "method": "GET"
+    },
+    {
+      "path": "/_synapse/admin/v1/users/:user_id",
+      "controller": "EltrixWeb.Admin.AdminController.update_user",
+      "method": "PUT"
+    },
+    {
+      "path": "/admin",
+      "controller": "Phoenix.LiveView.Plug.index",
+      "method": "GET"
+    },
+    {
+      "path": "/admin/invites",
+      "controller": "Phoenix.LiveView.Plug.index",
+      "method": "GET"
+    },
+    {
+      "path": "/admin/login",
+      "controller": "EltrixWeb.Admin.SessionController.new",
+      "method": "GET"
+    },
+    {
+      "path": "/admin/login",
+      "controller": "EltrixWeb.Admin.SessionController.create",
+      "method": "POST"
+    },
+    {
+      "path": "/admin/logout",
+      "controller": "EltrixWeb.Admin.SessionController.delete",
+      "method": "DELETE"
+    },
+    {
+      "path": "/admin/media",
+      "controller": "Phoenix.LiveView.Plug.index",
+      "method": "GET"
+    },
+    {
+      "path": "/admin/reports",
+      "controller": "Phoenix.LiveView.Plug.index",
+      "method": "GET"
+    },
+    {
+      "path": "/admin/rooms",
+      "controller": "Phoenix.LiveView.Plug.index",
+      "method": "GET"
+    },
+    {
+      "path": "/admin/rooms/:room_id",
+      "controller": "Phoenix.LiveView.Plug.show",
+      "method": "GET"
+    },
+    {
+      "path": "/admin/users",
+      "controller": "Phoenix.LiveView.Plug.index",
+      "method": "GET"
+    },
+    {
+      "path": "/admin/users/:user_id",
+      "controller": "Phoenix.LiveView.Plug.show",
+      "method": "GET"
+    },
+    {
+      "path": "/health",
+      "controller": "EltrixWeb.HealthController.index",
+      "method": "GET"
+    }
+  ]
+}
