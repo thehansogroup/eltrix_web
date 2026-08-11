@@ -1,10 +1,29 @@
 defmodule EltrixSite.MixProject do
   use Mix.Project
 
+  # Never a hardcoded literal. APP_VERSION comes from CI (a release tag, or the
+  # manifest base plus a -beta.<timestamp> suffix); the git fallback is for a
+  # local build, and the sentinel is flagged as such so a version that reached
+  # production without either is obvious rather than plausible.
+  @version (case System.get_env("APP_VERSION") do
+              nil ->
+                case System.cmd("git", ["describe", "--tags", "--always"], stderr_to_stdout: true) do
+                  {vsn, 0} ->
+                    trimmed = vsn |> String.trim() |> String.trim_leading("v")
+                    if Version.parse(trimmed) != :error, do: trimmed, else: "0.1.0-dev+#{trimmed}"
+
+                  _ ->
+                    "0.1.0-dev"
+                end
+
+              vsn ->
+                String.trim_leading(vsn, "v")
+            end)
+
   def project do
     [
       app: :eltrix_site,
-      version: "0.1.0",
+      version: @version,
       elixir: "~> 1.17",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,

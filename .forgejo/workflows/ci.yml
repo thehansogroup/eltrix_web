@@ -8,6 +8,9 @@ on:
     branches: [beta, main]
   workflow_dispatch:
 
+env:
+  IMAGE_NAME: thehansogroup/eltrix_web
+
 jobs:
   # The gate is the `mix ci` alias in mix.exs, exactly as in eltrix_server. CI
   # runs that and nothing else, so a green local run means a green PR and there
@@ -47,3 +50,77 @@ jobs:
 
       - name: Quality gate
         run: mix ci
+
+  docker:
+    name: Build and push image
+    runs-on: ubuntu-22.04
+    needs: check
+    if: |
+      always() && !failure() && !cancelled() &&
+      (github.ref == 'refs/heads/beta' || startsWith(github.ref, 'refs/tags/v'))
+    permissions: { contents: read, packages: write }
+    container:
+      image: forge.oddie.app/jlxq0/ci-elixir:1.19.5-otp-28
+      credentials:
+        username: jlxq0
+        password: ${{ secrets.FORGE_PUSH_TOKEN }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Login to Forgejo registry
+        run: |
+          mkdir -p ~/.docker
+          F_AUTH=$(printf "%s:%s" "jlxq0" "${{ secrets.FORGE_PUSH_TOKEN }}" | base64 -w0)
+          echo "{\"auths\":{\"forge.oddie.app\":{\"auth\":\"$F_AUTH\"}}}" > ~/.docker/config.json
+
+      - name: Compute version and tags
+        id: meta
+        run: |
+          set -euo pipefail
+          SHORT_SHA="${GITHUB_SHA::7}"
+          VERSION_RE='^[0-9]+\.[0-9]+\.[0-9]+([+-][0-9A-Za-z][0-9A-Za-z.-]*)?$'
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            VERSION="${GITHUB_REF#refs/tags/v}"
+            if [[ ! "$VERSION" =~ $VERSION_RE ]]; then
+              echo "::error::Invalid release tag: $VERSION"; exit 1
+            fi
+          else
+            BASE="$(jq -r '."."' .release-please-manifest.json)"
+            if [[ ! "$BASE" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              echo "::error::Invalid manifest version: $BASE"; exit 1
+            fi
+            VERSION="${BASE}-beta.$(date -u +%Y%m%d%H%M%S)"
+          fi
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "short_sha=${SHORT_SHA}" >> "$GITHUB_OUTPUT"
+
+      - name: Build and push
+        run: |
+          set -euo pipefail
+          # buildkitd runs on the runner *host*, so it is reachable at our own
+          # bridge gateway. Never hardcode it: the address changes on reboot and
+          # DHCP, and a stale literal hangs until TCP timeout rather than
+          # failing fast — which reads as a build failure with no build output.
+          GW="$(ip -4 route 2>/dev/null | awk '/^default/{print $3; exit}')"
+          if [ -z "$GW" ]; then
+            h=$(awk '$2=="00000000"{print $3; exit}' /proc/net/route)
+            GW=$(printf '%d.%d.%d.%d' "0x${h:6:2}" "0x${h:4:2}" "0x${h:2:2}" "0x${h:0:2}")
+          fi
+          export BUILDKIT_HOST="tcp://${GW}:1234"
+          echo "buildkitd at ${BUILDKIT_HOST}"
+          CACHE_REF="forge.oddie.app/${IMAGE_NAME}:cache"
+          V="${{ steps.meta.outputs.version }}"
+          S="${{ steps.meta.outputs.short_sha }}"
+          buildctl build \
+            --frontend dockerfile.v0 \
+            --local context=. \
+            --local dockerfile=. \
+            --opt build-arg:APP_VERSION=${V} \
+            --import-cache "type=registry,ref=${CACHE_REF}" \
+            --export-cache "type=registry,ref=${CACHE_REF},mode=max" \
+            --output "type=image,\"name=forge.oddie.app/${IMAGE_NAME}:v${V},forge.oddie.app/${IMAGE_NAME}:sha-${S}\",push=true"

@@ -14,6 +14,14 @@ defmodule EltrixSiteWeb.Router do
     plug :accepts, ["json"]
   end
 
+  # Probes. No auth, no session, and outside the browser pipeline so a CSRF or
+  # session change can never take the readiness probe down with it.
+  scope "/", EltrixSiteWeb do
+    pipe_through :well_known
+
+    get "/health", HealthController, :show
+  end
+
   # Matrix discovery, served as JSON from wherever it is asked for.
   #
   # These must **not** 301 to www (§5.1). A homeserver's server_name is

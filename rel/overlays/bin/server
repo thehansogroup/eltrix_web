@@ -1,0 +1,10 @@
+#!/bin/sh
+# `cd` to the release's own bin directory first.
+#
+# Without it `./eltrix_site` resolves against whatever the caller's working
+# directory happens to be, which is the image's WORKDIR in the container and
+# the repository root when a release is run by hand — and the failure is a
+# "No such file or directory" naming a path nobody wrote.
+set -eu
+cd -P -- "$(dirname -- "$0")"
+PHX_SERVER=true exec ./eltrix_site start
