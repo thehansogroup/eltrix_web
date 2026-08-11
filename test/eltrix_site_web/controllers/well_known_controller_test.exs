@@ -22,6 +22,19 @@ defmodule EltrixSiteWeb.WellKnownControllerTest do
     assert String.starts_with?(url, "https://")
   end
 
+  test "a deployment that delegates nowhere answers 404, not an empty document", %{conn: conn} do
+    Application.put_env(:eltrix_site, :delegate_matrix, false)
+    on_exit(fn -> Application.put_env(:eltrix_site, :delegate_matrix, true) end)
+
+    # www.eltrix.org serves the site before matrix.eltrix.org exists. A
+    # delegation naming a host that is not there is a published pointer to
+    # nothing, and an empty or malformed body would read as a broken
+    # delegation rather than an absent one.
+    for path <- ["/.well-known/matrix/server", "/.well-known/matrix/client"] do
+      assert %{"errcode" => "M_UNRECOGNIZED"} = conn |> get(path) |> json_response(404)
+    end
+  end
+
   test "neither is a redirect", %{conn: conn} do
     # A blanket apex-to-www rule would answer discovery with a 301, which a peer
     # is not obliged to follow — federation then fails with nothing logged here.

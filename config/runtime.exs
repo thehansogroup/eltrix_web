@@ -106,3 +106,15 @@ if config_env() == :prod do
   #
   # Check `Plug.SSL` for all available options in `force_ssl`.
 end
+
+# Which homeserver this deployment's Matrix discovery documents name, and
+# whether to publish them at all.
+#
+# DELEGATE_MATRIX exists because www.eltrix.org serves the site before
+# matrix.eltrix.org exists. A .well-known document naming a host that is not
+# there is a published pointer to nothing; unset it there and the endpoints
+# answer 404 M_UNRECOGNIZED, which is this project's convention for "not
+# implemented" and is what a client feature-detects on.
+config :eltrix_site,
+  homeserver_host: System.get_env("HOMESERVER_HOST", "matrix.eltrix.org"),
+  delegate_matrix: System.get_env("DELEGATE_MATRIX", "true") == "true"
