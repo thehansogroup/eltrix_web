@@ -21,6 +21,6 @@
   "sso": "none",
   "sync": "done",
   "threads": "partial",
-  "threepid": "partial",
+  "threepid": "done",
   "voip": "none"
 }

@@ -196,6 +196,16 @@
       "method": "POST"
     },
     {
+      "path": "/_matrix/client/v3/account/3pid/email/submitToken",
+      "controller": "EltrixWeb.Matrix.ThreePidController.submit_link",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/account/3pid/email/submitToken",
+      "controller": "EltrixWeb.Matrix.ThreePidController.submit",
+      "method": "POST"
+    },
+    {
       "path": "/_matrix/client/v3/account/3pid/msisdn/requestToken",
       "controller": "EltrixWeb.Matrix.ThreePidController.msisdn",
       "method": "POST"
@@ -213,6 +223,16 @@
     {
       "path": "/_matrix/client/v3/account/password/email/requestToken",
       "controller": "EltrixWeb.Matrix.ThreePidController.reset_token",
+      "method": "POST"
+    },
+    {
+      "path": "/_matrix/client/v3/account/password/email/submitToken",
+      "controller": "EltrixWeb.Matrix.ThreePidController.submit_link",
+      "method": "GET"
+    },
+    {
+      "path": "/_matrix/client/v3/account/password/email/submitToken",
+      "controller": "EltrixWeb.Matrix.ThreePidController.submit",
       "method": "POST"
     },
     {
