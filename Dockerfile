@@ -60,6 +60,15 @@ RUN mix assets.setup
 RUN mix assets.deploy
 
 COPY config/runtime.exs config/
+
+# rel/, and it is load-bearing. The overlay in rel/overlays/bin/server is the
+# image's entry point; without this COPY `mix release` succeeds, the image
+# builds and pushes clean, and the container dies at exec with
+# "/app/bin/server: no such file or directory" — a runtime failure for a file
+# that was never in the build context, reported by containerd rather than by
+# anything that looked at the release.
+COPY rel rel
+
 RUN mix release
 
 # ---------------------------------------------------------------------------
