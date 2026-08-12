@@ -34,6 +34,19 @@ config :esbuild,
       ~w(js/app.js --bundle --target=es2022 --outdir=../priv/static/assets/js --external:/fonts/* --external:/images/* --alias:@=.),
     cd: Path.expand("../assets", __DIR__),
     env: %{"NODE_PATH" => [Path.expand("../deps", __DIR__), Mix.Project.build_path()]}
+  ],
+  # The stylesheet, which nothing else builds.
+  #
+  # Tailwind used to be what copied CSS into priv/static. Removing it took the
+  # whole CSS pipeline with it and left the layout linking a file that was
+  # never written — so the deployed site rendered in Times New Roman with blue
+  # underlined links, and every test passed: the pages were correct, the
+  # "no external requests" check greps for absolute URLs, and a relative href
+  # to a missing file is neither. `assets_test.exs` now asserts the file exists.
+  css: [
+    args: ~w(css/app.css --bundle --outdir=../priv/static/assets/css),
+    cd: Path.expand("../assets", __DIR__),
+    env: %{"NODE_PATH" => [Path.expand("../deps", __DIR__), Mix.Project.build_path()]}
   ]
 
 # No Tailwind and no daisyUI. The design language is the web client's, which is

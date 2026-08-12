@@ -87,8 +87,8 @@ defmodule EltrixSite.MixProject do
     [
       setup: ["deps.get", "assets.setup", "assets.build"],
       "assets.setup": ["esbuild.install --if-missing"],
-      "assets.build": ["compile", "esbuild eltrix_site"],
-      "assets.deploy": ["esbuild eltrix_site --minify", "phx.digest"],
+      "assets.build": ["compile", "esbuild eltrix_site", "esbuild css"],
+      "assets.deploy": ["esbuild eltrix_site --minify", "esbuild css --minify", "phx.digest"],
       precommit: ["compile --warnings-as-errors", "deps.unlock --unused", "format", "test"],
       # The same shape as eltrix_server's gate: CI runs this alias and nothing
       # else. `compile --force` matters — the claims in EltrixSite.Capabilities
@@ -98,6 +98,12 @@ defmodule EltrixSite.MixProject do
         "format --check-formatted",
         "deps.unlock --check-unused",
         "compile --force --warnings-as-errors",
+        # Assets before tests, and not only so `assets_test.exs` has something
+        # to look at. priv/static/assets is gitignored, so without this step CI
+        # never runs the asset pipeline at all — which is how a site shipped
+        # with no stylesheet and a green build.
+        "assets.setup",
+        "assets.build",
         "test"
       ]
     ]
