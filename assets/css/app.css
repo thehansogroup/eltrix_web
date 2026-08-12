@@ -1,13 +1,28 @@
 /* Eltrix — the site.
  *
- * The design language is the web client's (D9, §5.2): a paper/ink palette with
- * one red accent, system type, and a monospace face doing the work that colour
- * usually does. The nine custom properties below are the client's, copied
- * rather than reinterpreted, so a person moving between the site and the
- * client is looking at the same object.
+ * The design language is the web client's, and this file is a translation of
+ * it rather than a palette borrowed from it. The first attempt took the nine
+ * custom properties and nothing else, which produced a soft, generic page in
+ * the right colours — hairline borders, no shadows, plain links. That is not
+ * the client.
  *
- * No framework, no CDN, no webfont. §5.2 requires zero runtime external
- * requests and that is easiest to guarantee by having nothing to request.
+ * What actually makes the client look like itself:
+ *
+ *   - panel edges are `1px solid var(--ink)`, not `--hair`. Hairlines are for
+ *     dividers *inside* a panel; the edge of a thing is black.
+ *   - panels carry `box-shadow: 4px 4px 0 var(--ink)` — a hard offset block,
+ *     no blur, no alpha.
+ *   - section labels are .7rem uppercase at .1em tracking in `--muted`.
+ *   - identifiers and metadata are `--mono`, .75–.85rem.
+ *   - buttons are solid ink with sheet text; the quiet ones are transparent.
+ *   - the current item is marked `inset 3px 0 0 var(--accent)`, not a fill.
+ *   - base type is 15px.
+ *
+ * Light only, as the client is. A dark scheme here would be a second design
+ * the client does not have.
+ *
+ * No framework, no CDN, no webfont — §5.2 requires zero runtime external
+ * requests, and having nothing to request is the easiest way to guarantee it.
  */
 
 :root {
@@ -22,141 +37,182 @@
   --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
-/* The dark scheme darkens the ground and lifts the accent. The accent at
- * #a8322a on a dark sheet reads at about 3.4:1, which fails AA for body text,
- * so it is lightened here rather than reused — colour that only works in one
- * scheme is not a token, it is a coincidence. */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --paper: #0b1119;
-    --sheet: #141c26;
-    --tint: #1b242f;
-    --ink: #e8eef5;
-    --muted: #9aabbd;
-    --hair: #2a3644;
-    --accent: #e8776c;
-  }
-}
-
-*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-  margin: 0;
+  font-family: var(--sans);
   background: var(--paper);
   color: var(--ink);
-  font-family: var(--sans);
-  font-size: 17px;
+  font-size: 15px;
   line-height: 1.6;
   -webkit-text-size-adjust: 100%;
 }
 
-.wrap { max-width: 54rem; margin: 0 auto; padding: 0 1.25rem; }
+.wrap { max-width: 52rem; margin: 0 auto; padding: 0 1.25rem; }
 
-/* Skip link: visible only when focused, which is the point. */
 .skip {
   position: absolute; left: -9999px;
   background: var(--sheet); color: var(--ink);
-  padding: .6rem 1rem; border: 2px solid var(--accent);
+  padding: .5rem .9rem;
+  border: 1px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--ink);
 }
 .skip:focus { left: 1rem; top: 1rem; z-index: 10; }
 
 a { color: var(--accent); text-underline-offset: .18em; }
-a:focus-visible, button:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
+/* Header: sheet on paper with a black rule under it, exactly as the client's. */
 header.masthead {
-  border-bottom: 1px solid var(--hair);
   background: var(--sheet);
+  border-bottom: 1px solid var(--ink);
 }
 header.masthead .wrap {
-  display: flex; align-items: baseline; gap: 1.25rem;
-  padding-top: 1rem; padding-bottom: 1rem;
+  display: flex; align-items: baseline; gap: 1rem;
+  padding-top: .75rem; padding-bottom: .75rem;
   flex-wrap: wrap;
 }
 .brand {
-  font-family: var(--mono);
-  font-weight: 600;
-  font-size: 1.05rem;
-  letter-spacing: .02em;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: .04em;
   color: var(--ink);
   text-decoration: none;
+  margin-right: auto;
 }
-nav.top { margin-left: auto; display: flex; gap: 1rem; flex-wrap: wrap; }
-nav.top a { font-size: .92rem; }
+nav.top { display: flex; gap: .25rem; flex-wrap: wrap; }
+nav.top a {
+  font-family: var(--mono);
+  font-size: .78rem;
+  color: var(--muted);
+  text-decoration: none;
+  padding: .15rem .45rem;
+  border: 1px solid transparent;
+}
+nav.top a:hover { color: var(--ink); border-color: var(--hair); background: var(--tint); }
 
 main { padding: 2.5rem 0 4rem; }
-h1 { font-size: 1.9rem; line-height: 1.25; margin: 0 0 .5rem; letter-spacing: -.01em; }
-h2 { font-size: 1.25rem; margin: 2.5rem 0 .75rem; letter-spacing: -.005em; }
-h3 { font-size: 1.02rem; margin: 1.75rem 0 .5rem; }
-.lede { font-size: 1.12rem; color: var(--muted); margin: 0 0 2rem; max-width: 42rem; }
 
-/* Capability list. The status word carries the meaning; the rule beside it
- * carries the hue. Colour is never the only signal — the same rule the client's
- * indicator lamps follow, and the one the design bake-off got wrong twice. */
-ul.caps { list-style: none; padding: 0; margin: 0; }
-ul.caps li {
-  border-top: 1px solid var(--hair);
-  padding: 1rem 0;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: .25rem 1rem;
-}
-ul.caps li h3 { margin: 0; grid-column: 1; }
-ul.caps li p { margin: .15rem 0 0; grid-column: 1; color: var(--muted); }
-.status {
-  grid-column: 2; grid-row: 1;
-  font-family: var(--mono);
-  font-size: .74rem;
+h1 { font-size: 1.5rem; line-height: 1.25; margin-bottom: .6rem; letter-spacing: -.01em; }
+
+/* Section headings are the client's small-caps label, not a big serif word. */
+h2 {
+  font-size: .72rem;
   text-transform: uppercase;
-  letter-spacing: .08em;
-  align-self: center;
-  white-space: nowrap;
-  padding: .2rem .5rem;
-  border: 1px solid var(--hair);
-  border-radius: 2px;
-  background: var(--tint);
+  letter-spacing: .1em;
   color: var(--muted);
+  font-weight: 600;
+  margin: 2.75rem 0 .75rem;
 }
-.status.done { color: var(--ink); border-color: var(--ink); }
-.status.partial { color: var(--accent); border-color: var(--accent); }
-.status.none { color: var(--muted); }
+h3 { font-size: .95rem; margin: 0; }
 
+.lede { color: var(--muted); margin-bottom: 1.75rem; max-width: 40rem; }
+
+/* The one panel language: sheet, black edge, hard shadow. */
 .note {
   background: var(--sheet);
-  border: 1px solid var(--hair);
-  border-left: 3px solid var(--accent);
+  border: 1px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--ink);
   padding: 1rem 1.25rem;
   margin: 2rem 0;
 }
-.note p { margin: 0; }
 .note p + p { margin-top: .6rem; }
+.note strong { letter-spacing: .01em; }
 
-.prose { background: var(--sheet); border: 1px solid var(--hair); padding: 1.5rem 1.75rem; }
-.prose > :first-child { margin-top: 0; }
-.prose blockquote {
-  margin: 1.5rem 0; padding: .75rem 1rem;
-  border-left: 3px solid var(--accent); background: var(--tint);
+/* Capability rows. Hairlines divide inside the panel; the panel edge is ink.
+ * The status is a mono micro-label — the same treatment identifiers get in the
+ * client — and it is never the only signal, because the word is the meaning. */
+ul.caps {
+  list-style: none;
+  background: var(--sheet);
+  border: 1px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--ink);
 }
-.prose code { font-family: var(--mono); font-size: .88em; background: var(--tint); padding: .1em .3em; }
-.prose pre { overflow-x: auto; background: var(--tint); padding: 1rem; }
+ul.caps li {
+  padding: .85rem 1.1rem;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: .2rem .9rem;
+}
+ul.caps li + li { border-top: 1px solid var(--hair); }
+ul.caps li h3 { grid-column: 1; }
+ul.caps li p { grid-column: 1; color: var(--muted); font-size: .88rem; }
+
+.status {
+  grid-column: 2; grid-row: 1;
+  font-family: var(--mono);
+  font-size: .68rem;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  align-self: center;
+  white-space: nowrap;
+  padding: .15rem .45rem;
+  border: 1px solid var(--hair);
+  color: var(--muted);
+  background: var(--tint);
+}
+/* Done is the filled one — ink on sheet is the client's "this is selected"
+ * treatment, and it is the only state worth spending contrast on. */
+.status.done { background: var(--ink); color: var(--sheet); border-color: var(--ink); }
+.status.partial { color: var(--accent); border-color: var(--accent); background: var(--sheet); }
+.status.none { color: var(--muted); }
+
+/* Long-form documents — the policies. Same panel, prose inside it. */
+.prose {
+  background: var(--sheet);
+  border: 1px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--ink);
+  padding: 1.5rem 1.75rem;
+}
+.prose > :first-child { margin-top: 0; }
+.prose h2 { margin-top: 2rem; }
+.prose h3 { margin: 1.5rem 0 .4rem; font-size: .95rem; }
+.prose p, .prose ul, .prose ol, .prose table { margin-bottom: 1rem; }
+.prose ul, .prose ol { padding-left: 1.25rem; }
+.prose li { margin-bottom: .3rem; }
+.prose blockquote {
+  margin: 1.25rem 0; padding: .7rem .9rem;
+  background: var(--tint);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+.prose blockquote p:last-child { margin-bottom: 0; }
+.prose code {
+  font-family: var(--mono); font-size: .85em;
+  background: var(--tint); padding: .1em .3em;
+  border: 1px solid var(--hair);
+}
+.prose pre {
+  overflow-x: auto; background: var(--tint);
+  border: 1px solid var(--hair); padding: .9rem;
+}
+.prose pre code { border: 0; padding: 0; background: none; }
 .prose table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; }
-.prose th, .prose td { border: 1px solid var(--hair); padding: .5rem .7rem; text-align: left; }
+.prose th, .prose td { border: 1px solid var(--hair); padding: .45rem .65rem; text-align: left; }
+.prose th {
+  background: var(--tint);
+  font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted);
+}
 
 footer.foot {
-  border-top: 1px solid var(--hair);
+  border-top: 1px solid var(--ink);
   background: var(--sheet);
   color: var(--muted);
-  font-size: .9rem;
+  font-size: .85rem;
 }
-footer.foot .wrap { padding-top: 1.5rem; padding-bottom: 2.5rem; }
-footer.foot nav { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: .75rem; }
+footer.foot .wrap { padding-top: 1.25rem; padding-bottom: 2.5rem; }
+footer.foot nav { display: flex; gap: .25rem; flex-wrap: wrap; margin-bottom: .75rem; }
+footer.foot nav a {
+  font-family: var(--mono); font-size: .75rem;
+  color: var(--muted); text-decoration: none;
+  padding: .15rem .45rem; border: 1px solid transparent;
+}
+footer.foot nav a:hover { color: var(--ink); border-color: var(--hair); background: var(--tint); }
 
-@media (max-width: 30rem) {
-  body { font-size: 16px; }
+@media (max-width: 34rem) {
   ul.caps li { grid-template-columns: 1fr; }
-  .status { grid-column: 1; grid-row: auto; justify-self: start; margin-top: .4rem; }
+  .status { grid-column: 1; grid-row: auto; justify-self: start; margin-top: .35rem; }
+  .note, ul.caps, .prose { box-shadow: 3px 3px 0 var(--ink); }
+  .prose { padding: 1.1rem 1rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
