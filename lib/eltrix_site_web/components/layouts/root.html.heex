@@ -11,6 +11,28 @@
     <.live_title default="Eltrix" suffix=" · Eltrix">{assigns[:page_title]}</.live_title>
     <link phx-track-static rel="stylesheet" href={~p"/assets/css/app.css"} />
     <%!--
+      Plausible, self-hosted, and only where a domain is configured — www sets
+      it and beta does not, so staging traffic never lands in the production
+      property.
+
+      `data-domain` is the *apex*. Plausible matches it against the registered
+      site exactly and discards anything else server-side, so a value of
+      "www.eltrix.org" would load the script, return 202, and leave the
+      dashboard empty forever with nothing anywhere reporting a fault.
+
+      No cookies and no personal data, so no consent banner. The privacy policy
+      was rewritten in the same commit that added this — a site that serves a
+      document saying "no analytics" while running analytics is exactly the
+      failure the rest of this codebase exists to prevent.
+    --%>
+    <script
+      :if={@analytics_domain}
+      defer
+      data-domain={@analytics_domain}
+      src="https://stats.oddie.app/js/script.js"
+    >
+    </script>
+    <%!--
       No inline theme script.
 
       The generator ships one that reads localStorage and stamps data-theme

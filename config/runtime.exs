@@ -118,3 +118,9 @@ end
 config :eltrix_site,
   homeserver_host: System.get_env("HOMESERVER_HOST", "matrix.eltrix.org"),
   delegate_matrix: System.get_env("DELEGATE_MATRIX", "true") == "true"
+
+# Self-hosted Plausible. Unset means no script at all, which is the default and
+# what beta runs — only www is instrumented, so staging traffic never lands in
+# the production property. The value is the apex, because Plausible matches it
+# exactly against the registered site.
+config :eltrix_site, analytics_domain: System.get_env("ANALYTICS_DOMAIN")

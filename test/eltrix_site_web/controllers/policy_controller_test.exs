@@ -23,8 +23,17 @@ defmodule EltrixSiteWeb.PolicyControllerTest do
     end
   end
 
-  test "the privacy policy still says there is no analytics", %{conn: conn} do
-    # Pinned because it is the claim most likely to quietly stop being true.
-    assert conn |> get("/privacy") |> html_response(200) =~ "No analytics"
+  test "the privacy policy describes the analytics the site actually runs", %{conn: conn} do
+    html = conn |> get("/privacy") |> html_response(200)
+
+    # The site counts page views with self-hosted Plausible. A policy that did
+    # not say so would be a document the page serving it contradicts, which is
+    # the one failure this whole codebase is arranged against.
+    assert html =~ "Plausible"
+    assert html =~ "self-hosted"
+
+    # And the client is still excluded, which is the part that matters: page
+    # addresses in a Matrix client carry room identifiers.
+    assert html =~ "does not run on the web client"
   end
 end

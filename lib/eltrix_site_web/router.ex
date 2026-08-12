@@ -8,6 +8,13 @@ defmodule EltrixSiteWeb.Router do
     plug :put_root_layout, html: {EltrixSiteWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :put_analytics
+  end
+
+  # Assigned once, in the pipeline, so every page that uses the root layout has
+  # it. `nil` where it is unset, which is beta and every local run.
+  defp put_analytics(conn, _opts) do
+    assign(conn, :analytics_domain, Application.get_env(:eltrix_site, :analytics_domain))
   end
 
   pipeline :well_known do

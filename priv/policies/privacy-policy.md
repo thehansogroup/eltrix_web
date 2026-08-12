@@ -36,11 +36,20 @@ online. They expire by themselves and do not survive a restart.
 
 ## What is not stored
 
-- **No analytics, no tracking, no third-party scripts.** The web client makes no
-  request to anything except the homeserver you point it at. There is no
-  advertising identifier and nothing is shared with an analytics provider —
-  this was proposed on 2026-08-11 and declined, because page paths in a Matrix
-  client carry room identifiers.
+- **No third-party analytics, no tracking, no advertising.** Nothing is shared
+  with an analytics company, there is no advertising identifier, and no
+  third-party script runs on any page.
+
+  `www.eltrix.org` — the marketing site, and only that site — counts page views
+  using **Plausible, self-hosted** on infrastructure the operator runs. It sets
+  no cookies, stores no personal data and cannot follow you between sites,
+  which is why there is no consent banner to click. What it records is the page
+  address, the referrer and a coarse country, and nothing that identifies you.
+
+  **It does not run on the web client, and it will not.** Page addresses in a
+  Matrix client carry room identifiers, so measuring them would be measuring
+  who is in which room. That is the reason this was declined for the client on
+  2026-08-11, and the reason it stays declined.
 - **No message content in logs.** Request bodies are never logged. Account data
   carries cross-signing private-key material and federation bodies carry
   ciphertext, so this is a rule in `CLAUDE.md` rather than a habit.

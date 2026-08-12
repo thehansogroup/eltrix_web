@@ -52,8 +52,16 @@ defmodule EltrixSiteWeb.PageControllerTest do
     for path <- ["/", "/status", "/terms", "/privacy", "/abuse", "/imprint"] do
       html = conn |> get(path) |> html_response(200)
 
-      refute html =~ ~r/\ssrc="https?:\/\//,
-             "#{path} loads a resource from an external host"
+      # One exception, deliberately named rather than a loosened pattern:
+      # self-hosted Plausible on infrastructure the operator runs. Cookie-free,
+      # no personal data, and the privacy policy says so. Any *other* external
+      # host still fails, which is the rule §5.2 is actually protecting.
+      external =
+        Regex.scan(~r/\ssrc="(https?:\/\/[^\/"]+)/, html, capture: :all_but_first)
+        |> List.flatten()
+        |> Enum.reject(&(&1 == "https://stats.oddie.app"))
+
+      assert external == [], "#{path} loads a resource from #{inspect(external)}"
 
       refute html =~ ~r/<link[^>]+href="https?:\/\//,
              "#{path} links a stylesheet or icon from an external host"
