@@ -72,3 +72,11 @@ import_config "#{config_env()}.exs"
 # a visible fault — it is a peer quietly talking to the wrong server, or to
 # nothing.
 config :eltrix_site, homeserver_host: "matrix.eltrix.org"
+
+# Where the source lives.
+#
+# Configured, not written into a template, because the public mirror is not the
+# canonical remote — and because the previous site hardcoded a GitHub URL for a
+# repository that did not exist, which is the kind of claim §5.1 exists to stop.
+config :eltrix_site,
+  source_url: System.get_env("SOURCE_URL", "https://forge.oddie.app/thehansogroup/eltrix_server")

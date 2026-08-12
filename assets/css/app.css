@@ -209,6 +209,8 @@ footer.foot nav a {
 footer.foot nav a:hover { color: var(--ink); border-color: var(--hair); background: var(--tint); }
 
 @media (max-width: 34rem) {
+  .shots { gap: 1.25rem; }
+  .shots .frame { height: 9.5rem; }
   ul.caps li { grid-template-columns: 1fr; }
   .status { grid-column: 1; grid-row: auto; justify-self: start; margin-top: .35rem; }
   .note, ul.caps, .prose { box-shadow: 3px 3px 0 var(--ink); }
@@ -221,3 +223,153 @@ footer.foot nav a:hover { color: var(--ink); border-color: var(--hair); backgrou
     transition-duration: .001ms !important;
   }
 }
+
+/* ---------------------------------------------------------------------------
+ * Landing page
+ *
+ * The site introduces the project first and explains its own build gate last.
+ * An earlier version led with the gate, which is a mechanism the people this
+ * page is for do not care about.
+ * ------------------------------------------------------------------------ */
+
+.hero { background: var(--sheet); border-bottom: 1px solid var(--ink); }
+.hero .wrap { padding-top: 3.5rem; padding-bottom: 3rem; }
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: .7rem;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: var(--muted);
+  margin-bottom: 1.25rem;
+}
+.eyebrow .sep { color: var(--accent); margin: 0 .35rem; }
+
+.hero h1 {
+  font-size: clamp(2rem, 6vw, 3.1rem);
+  line-height: 1.05;
+  letter-spacing: -.025em;
+  margin-bottom: 1rem;
+}
+.hero .lede { font-size: 1.05rem; max-width: 34rem; margin-bottom: 1.75rem; }
+
+/* Buttons are the client's: solid ink, sheet text, square, 1px ink edge. */
+.cta { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 2.5rem; }
+.button {
+  font-size: .85rem;
+  padding: .5rem .9rem;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--sheet);
+  text-decoration: none;
+  display: inline-block;
+}
+.button:hover { box-shadow: 3px 3px 0 var(--ink); }
+.button.secondary { background: var(--sheet); color: var(--ink); }
+.button.quiet { background: transparent; border-color: transparent; color: var(--muted); }
+.button.quiet:hover { color: var(--ink); box-shadow: none; border-color: var(--hair); }
+
+.facts { list-style: none; display: flex; gap: 2.5rem; flex-wrap: wrap; }
+.facts strong {
+  display: block;
+  font-family: var(--mono);
+  font-size: 1.15rem;
+  letter-spacing: -.01em;
+}
+.facts span {
+  font-size: .72rem; text-transform: uppercase; letter-spacing: .1em;
+  color: var(--muted);
+}
+
+/* Screenshot placeholders. Hatched rather than blank, and captioned with the
+ * real state, so nobody mistakes one for a product shot. */
+.shots {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+/* A fixed height with the aspect ratio deciding the width, so a phone, a
+ * tablet and a browser window sit on one baseline instead of a ragged row.
+ * Three different ratios in a grid of equal columns looks like a fault. */
+.shots figure { flex: none; }
+.shots .frame {
+  height: 13rem;
+  width: auto;
+  border: 1px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--ink);
+  background:
+    repeating-linear-gradient(
+      45deg,
+      var(--tint) 0 10px,
+      var(--sheet) 10px 20px
+    );
+  display: flex; align-items: center; justify-content: center;
+}
+.shots .placeholder {
+  font-family: var(--mono);
+  font-size: .68rem;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--muted);
+  background: var(--sheet);
+  border: 1px solid var(--hair);
+  padding: .2rem .5rem;
+}
+.shots figcaption { margin-top: .7rem; }
+.shots figcaption strong { display: block; font-size: .9rem; }
+.shots figcaption span {
+  font-family: var(--mono); font-size: .7rem;
+  text-transform: uppercase; letter-spacing: .08em; color: var(--muted);
+}
+.shots .live figcaption span { color: var(--accent); }
+
+/* Prose paragraphs, wherever they sit. This was scoped to `main > .wrap > p`
+ * and stopped matching the moment the page grew sections, which ran the
+ * paragraphs of "Running it" together into one block. */
+main p { max-width: 40rem; }
+section > .wrap > p { margin-bottom: 1rem; }
+section > .wrap > p:last-child { margin-bottom: 0; }
+
+.footnote {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--hair);
+  font-size: .8rem;
+  color: var(--muted);
+}
+
+/* Alternating bands, so the page has a rhythm rather than one long column. */
+.band { background: var(--sheet); border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); }
+section > .wrap { padding-top: 3rem; padding-bottom: 3rem; }
+section h2 { margin-top: 0; }
+.section-lede { color: var(--muted); max-width: 40rem; margin-bottom: 2rem; }
+
+/* Feature cards. The same panel language as everything else, so a card and a
+ * capability row and a policy document are visibly the same kind of object. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 1.25rem;
+}
+.card {
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--ink);
+  padding: 1.1rem 1.25rem;
+}
+.card .kicker {
+  font-family: var(--mono);
+  font-size: .65rem;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--accent);
+  margin-bottom: .5rem;
+}
+.card h3 { font-size: 1rem; margin-bottom: .5rem; }
+.card p { color: var(--muted); font-size: .88rem; }
+
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); gap: 1.5rem; }
+.two p + p { margin-top: 1rem; }
+.two p { max-width: none; }

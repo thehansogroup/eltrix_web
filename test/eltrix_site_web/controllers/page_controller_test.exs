@@ -3,20 +3,30 @@ defmodule EltrixSiteWeb.PageControllerTest do
 
   alias EltrixSite.Capabilities
 
-  test "the landing page lists what works, from status.json", %{conn: conn} do
+  test "the landing page sells on capabilities that are actually done", %{conn: conn} do
     html = conn |> get(~p"/") |> html_response(200)
+
+    for feature <- Capabilities.features() do
+      assert html =~ feature.title
+      assert Capabilities.title(feature.key) != nil
+    end
+  end
+
+  test "the status page lists what works", %{conn: conn} do
+    html = conn |> get(~p"/status") |> html_response(200)
 
     for capability <- Capabilities.works() do
       assert html =~ capability.title
     end
   end
 
-  test "the landing page also lists what does not work", %{conn: conn} do
-    html = conn |> get(~p"/") |> html_response(200)
-
+  test "the status page also lists what does not work", %{conn: conn} do
     # The half that is easy to drop. A site showing only its finished features
     # is not lying by sentence and is lying by shape, and this is the assertion
-    # that stops somebody "tidying" the second list away.
+    # that stops somebody "tidying" the second list away. It moved here with the
+    # lists themselves when the landing page became a landing page.
+    html = conn |> get(~p"/status") |> html_response(200)
+
     absent = Capabilities.absent()
     assert absent != [], "nothing is partial or missing, which is implausible — check status.json"
 
@@ -25,14 +35,30 @@ defmodule EltrixSiteWeb.PageControllerTest do
     end
   end
 
-  test "no page makes a request to another host", %{conn: conn} do
-    # §5.2: zero runtime external requests. A CDN font or script would be a
-    # third party watching everybody who reads the privacy policy.
+  test "the landing page links to the full status rather than hiding it", %{conn: conn} do
+    # A marketing page that shows six good things and no way to the rest is the
+    # shape this project exists not to be.
+    assert conn |> get(~p"/") |> html_response(200) =~ ~s(href="/status")
+  end
+
+  test "no page fetches a resource from another host", %{conn: conn} do
+    # §5.2: zero runtime *external requests*. A CDN font, script or stylesheet
+    # would be a third party watching everybody who reads the privacy policy.
+    #
+    # A hyperlink is not a request — the landing page links to the source and
+    # to the client, which is the point of a landing page. The first version of
+    # this test matched any absolute `href` and so forbade linking anywhere,
+    # which is a different rule and not the one §5.2 states.
     for path <- ["/", "/status", "/terms", "/privacy", "/abuse", "/imprint"] do
       html = conn |> get(path) |> html_response(200)
 
-      refute html =~ ~r/(src|href)="https?:\/\//,
-             "#{path} references an external host"
+      refute html =~ ~r/\ssrc="https?:\/\//,
+             "#{path} loads a resource from an external host"
+
+      refute html =~ ~r/<link[^>]+href="https?:\/\//,
+             "#{path} links a stylesheet or icon from an external host"
+
+      refute html =~ ~r/@import/, "#{path} imports a stylesheet"
     end
   end
 

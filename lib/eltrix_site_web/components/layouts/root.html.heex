@@ -27,11 +27,17 @@
     <header class="masthead">
       <div class="wrap">
         <a class="brand" href={~p"/"}>eltrix</a>
+        <%!--
+          Primary navigation is what the project *is*. The terms, the privacy
+          policy and the abuse path used to sit here, which made a product page
+          read like a compliance page — they are obligations, published and
+          reachable as §4.7 requires, and the footer is where obligations live.
+        --%>
         <nav class="top" aria-label="Primary">
+          <.link navigate={~p"/#features"}>What it does</.link>
+          <.link navigate={~p"/#clients"}>Clients</.link>
+          <.link navigate={~p"/#why"}>Why Elixir</.link>
           <.link navigate={~p"/status"}>Status</.link>
-          <.link navigate={~p"/terms"}>Terms</.link>
-          <.link navigate={~p"/privacy"}>Privacy</.link>
-          <.link navigate={~p"/abuse"}>Report abuse</.link>
         </nav>
       </div>
     </header>
