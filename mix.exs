@@ -46,7 +46,10 @@ defmodule EltrixSite.MixProject do
 
   def cli do
     [
-      preferred_envs: [precommit: :test, ci: :test]
+      # `smoke` here for the same reason the other two are: without it the
+      # command written above the alias aborts before it reaches the network,
+      # telling an operator to set MIX_ENV.
+      preferred_envs: [precommit: :test, ci: :test, smoke: :test]
     ]
   end
 
@@ -90,6 +93,12 @@ defmodule EltrixSite.MixProject do
       "assets.build": ["compile", "esbuild eltrix_site", "esbuild css"],
       "assets.deploy": ["esbuild eltrix_site --minify", "esbuild css --minify", "phx.digest"],
       precommit: ["compile --warnings-as-errors", "deps.unlock --unused", "format", "test"],
+
+      # Against the *deployed* site, not a router in this VM (§5.5, §10.8).
+      #
+      #     ELTRIX_SITE_SMOKE_URL=https://beta.eltrix.org mix smoke
+      #
+      smoke: ["test --only smoke --include smoke"],
       # The same shape as eltrix_server's gate: CI runs this alias and nothing
       # else. `compile --force` matters — the claims in EltrixSite.Capabilities
       # are checked while compiling, so an incremental build with a warm beam
