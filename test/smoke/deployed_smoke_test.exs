@@ -50,7 +50,7 @@ defmodule EltrixSite.DeployedSmokeTest do
       for path <- smokeable_paths() do
         {status, _headers, _body} = get(path)
 
-        assert status == 200,
+        assert status in acceptable(path),
                "#{path} answered #{status} through the edge — a route the router serves " <>
                  "and the deployment does not is a page nobody can reach"
       end
@@ -58,32 +58,66 @@ defmodule EltrixSite.DeployedSmokeTest do
   end
 
   describe "the Matrix delegation" do
-    # §5.1: these must never 301. A homeserver's server_name is `eltrix.org`, so
-    # a peer resolving where to talk to it fetches this path — and a peer is not
-    # obliged to follow a redirect, so an apex→www rule in front of these turns
-    # federation discovery off.
-    test "/.well-known/matrix/server is JSON, served directly" do
+    # Two states are correct here and one is not, and the difference is the
+    # whole of §5.1.
+    #
+    # A deployment that has a homeserver **serves** the document. One that does
+    # not — `www.eltrix.org` today, because `matrix.eltrix.org` is still dark —
+    # answers `404 M_UNRECOGNIZED`, deliberately: a delegation naming a host
+    # that does not exist is worse than no delegation, and 404 is what a client
+    # feature-detects on.
+    #
+    # What must never happen, in either state, is a **redirect**. A peer
+    # resolving `eltrix.org` is not obliged to follow one, so a blanket
+    # apex→www rule in front of these paths turns federation discovery off —
+    # and it would look like a working site the whole time.
+    #
+    # The first version of this asserted 200 outright. That is an assumption
+    # about the environment dressed as a criterion: it passed on beta and
+    # failed on production against a deployment behaving exactly as designed.
+    test "/.well-known/matrix/server is served, or says it is not published" do
       {status, headers, body} = get("/.well-known/matrix/server")
 
-      assert status == 200, "the server delegation answered #{status}"
+      refute status in 300..399, "the server delegation redirected (#{status}) — see §5.1"
       assert header(headers, "content-type") =~ "application/json"
 
-      assert {:ok, %{"m.server" => server}} = Jason.decode(body)
-      assert is_binary(server) and server != ""
+      case status do
+        200 ->
+          assert {:ok, %{"m.server" => server}} = Jason.decode(body)
+          assert is_binary(server) and server != ""
 
-      # A host and a port. Without the port every peer tries 8448 and finds
-      # nothing, which is the failure §4.6 names in the other repository.
-      assert String.contains?(server, ":"), "m.server names no port: #{server}"
+          # A host *and* a port. Without the port every peer tries 8448 and
+          # finds nothing, which is the failure §4.6 names in the other
+          # repository.
+          assert String.contains?(server, ":"), "m.server names no port: #{server}"
+
+        404 ->
+          assert {:ok, %{"errcode" => "M_UNRECOGNIZED"}} = Jason.decode(body)
+
+        other ->
+          flunk("the server delegation answered #{other}")
+      end
     end
 
-    test "/.well-known/matrix/client is JSON, served directly" do
+    test "/.well-known/matrix/client is served, or says it is not published" do
       {status, headers, body} = get("/.well-known/matrix/client")
 
-      assert status == 200, "the client delegation answered #{status}"
+      refute status in 300..399, "the client delegation redirected (#{status}) — see §5.1"
       assert header(headers, "content-type") =~ "application/json"
 
-      assert {:ok, %{"m.homeserver" => %{"base_url" => url}}} = Jason.decode(body)
-      assert String.starts_with?(url, "https://"), "the homeserver base_url is not https: #{url}"
+      case status do
+        200 ->
+          assert {:ok, %{"m.homeserver" => %{"base_url" => url}}} = Jason.decode(body)
+
+          assert String.starts_with?(url, "https://"),
+                 "the homeserver base_url is not https: #{url}"
+
+        404 ->
+          assert {:ok, %{"errcode" => "M_UNRECOGNIZED"}} = Jason.decode(body)
+
+        other ->
+          flunk("the client delegation answered #{other}")
+      end
     end
   end
 
@@ -153,6 +187,11 @@ defmodule EltrixSite.DeployedSmokeTest do
     |> Enum.uniq()
     |> Enum.sort()
   end
+
+  # The delegation paths are allowed to say "not published here" — see the
+  # delegation tests. Every other route is a page and must answer.
+  defp acceptable("/.well-known/matrix/" <> _rest), do: [200, 404]
+  defp acceptable(_path), do: [200]
 
   # `href` values that stay on this site. Anchors, mail and external hosts are
   # somebody else's to keep working.
