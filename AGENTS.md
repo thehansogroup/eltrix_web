@@ -53,6 +53,17 @@ template here; copy the file.
 `assets.build` steps CI never runs the asset pipeline at all. That is how a site
 once shipped with no stylesheet and a green build.
 
+## Never log request bodies
+
+The published privacy policy this site serves says request bodies are never
+logged, and says it **is a rule in `AGENTS.md` rather than a habit** — so this
+paragraph is what makes that sentence true here rather than only in
+`eltrix_server`.
+
+It applies independently: this site takes form submissions. It is not inherited
+from the homeserver's version of the rule, and it is not weakened by the fact
+that this repository holds no message content.
+
 ## The policy documents gate the first real account
 
 Eltrix is a real service, not a demo: terms, a privacy policy and an abuse
