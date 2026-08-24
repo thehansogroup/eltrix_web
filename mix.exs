@@ -100,13 +100,12 @@ defmodule EltrixSite.MixProject do
       #
       smoke: ["test --only smoke --include smoke"],
       # The same shape as eltrix_server's gate: CI runs this alias and nothing
-      # else. `compile --force` matters — the claims in EltrixSite.Capabilities
-      # are checked while compiling, so an incremental build with a warm beam
-      # would skip the one check this site exists to make.
+      # else. `--force` is gone with the compile-time claim check it existed
+      # for; an ordinary incremental compile is enough now.
       ci: [
         "format --check-formatted",
         "deps.unlock --check-unused",
-        "compile --force --warnings-as-errors",
+        "compile --warnings-as-errors",
         # Assets before tests, and not only so `assets_test.exs` has something
         # to look at. priv/static/assets is gitignored, so without this step CI
         # never runs the asset pipeline at all — which is how a site shipped

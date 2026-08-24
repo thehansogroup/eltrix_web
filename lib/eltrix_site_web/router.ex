@@ -48,7 +48,6 @@ defmodule EltrixSiteWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
-    get "/status", PageController, :status
     get "/terms", PolicyController, :terms
     get "/privacy", PolicyController, :privacy
     get "/abuse", PolicyController, :abuse

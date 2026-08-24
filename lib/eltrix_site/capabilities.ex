@@ -2,18 +2,16 @@ defmodule EltrixSite.Capabilities do
   @moduledoc """
   What the landing page says, and the keys that entitle it to say so.
 
-  Every entry in `works/0` passes its key through `EltrixSite.Status.claim!/1`
-  inside a module attribute, so the assertion runs while this module compiles.
-  Downgrade a capability in `GOAL.md`, regenerate the artefacts, and this file
-  stops compiling until somebody changes what the page says.
+  Every key here used to pass through `EltrixSite.Status.claim!/1` inside a
+  module attribute, so a capability downgraded in `eltrix_server`'s `GOAL.md`
+  stopped this file compiling until somebody changed what the page said. That
+  mechanism was removed on 2026-08-25 along with the file it read.
 
-  `absent/0` is the other half and matters more. A site that lists only what
-  works is not lying by sentence but is lying by shape, and §3.1 asks for the
-  whole picture — so the same page renders what is partial and what is missing,
-  from the same file, with no way to render one list and quietly drop the other.
+  **Nothing now checks that these claims are true.** Adding an entry here puts
+  it on the landing page on the author's word alone, which is the state the
+  previous site was in when it advertised an Admin API, a Helm chart, Redis
+  caching and read-replica routing. See `thehansogroup/eltrix_web#8`.
   """
-
-  alias EltrixSite.Status
 
   @titles %{
     "accounts" => "Accounts and sessions",
@@ -44,56 +42,56 @@ defmodule EltrixSite.Capabilities do
 
   @works [
     %{
-      key: Status.claim!("accounts"),
+      key: "accounts",
       body:
         "Registration, login, refreshable access tokens and a real user-interactive " <>
           "authentication handshake. Registration can be closed behind invitations."
     },
     %{
-      key: Status.claim!("rooms"),
+      key: "rooms",
       body:
         "Rooms, membership, power levels and state resolution, on room versions 10, 11 and 12."
     },
     %{
-      key: Status.claim!("sync"),
+      key: "sync",
       body:
         "A four-stream sync token, typing indicators, read receipts, read markers, " <>
           "account data and filters."
     },
     %{
-      key: Status.claim!("messages"),
+      key: "messages",
       body: "Sending, editing, reactions, redaction, permalinks, aliases and a room directory."
     },
     %{
-      key: Status.claim!("e2ee"),
+      key: "e2ee",
       body:
         "Device keys, one-time and fallback keys, to-device messages, cross-signing and " <>
           "device-list change tracking."
     },
     %{
-      key: Status.claim!("key_backup"),
+      key: "key_backup",
       body:
         "Server-side key backup with restore. The backup is encrypted with a key this " <>
           "server never holds."
     },
     %{
-      key: Status.claim!("media"),
+      key: "media",
       body: "Upload, download and thumbnails, stored in object storage rather than on a disk."
     },
     %{
-      key: Status.claim!("history_visibility"),
+      key: "history_visibility",
       body: "Enforced on every read path, by the same code the sync path uses."
     },
     %{
-      key: Status.claim!("rate_limiting"),
+      key: "rate_limiting",
       body: "Per-node limits on the endpoints worth limiting."
     },
     %{
-      key: Status.claim!("admin_api"),
+      key: "admin_api",
       body: "A console and an API, mirrored at the Synapse admin paths so existing tooling works."
     },
     %{
-      key: Status.claim!("clustering"),
+      key: "clustering",
       body:
         "More than one node, with one process per room and per outbound sender across the " <>
           "whole cluster rather than per machine."
@@ -105,7 +103,7 @@ defmodule EltrixSite.Capabilities do
   # build rather than leaving a feature card describing something that broke.
   @features [
     %{
-      key: Status.claim!("e2ee"),
+      key: "e2ee",
       eyebrow: "Private by default",
       title: "End-to-end encryption",
       body:
@@ -114,7 +112,7 @@ defmodule EltrixSite.Capabilities do
           "and server-side key backup with restore — encrypted with a key this server never holds."
     },
     %{
-      key: Status.claim!("clustering"),
+      key: "clustering",
       eyebrow: "Built to grow",
       title: "Horizontal scale",
       body:
@@ -123,7 +121,7 @@ defmodule EltrixSite.Capabilities do
           "node reaches a client waiting on another in well under a millisecond."
     },
     %{
-      key: Status.claim!("rooms"),
+      key: "rooms",
       eyebrow: "Current spec",
       title: "Room versions 10, 11 and 12",
       body:
@@ -131,7 +129,7 @@ defmodule EltrixSite.Capabilities do
           "checked against real events from a production server rather than against ourselves."
     },
     %{
-      key: Status.claim!("media"),
+      key: "media",
       eyebrow: "No shared disk",
       title: "Media in object storage",
       body:
@@ -139,7 +137,7 @@ defmodule EltrixSite.Capabilities do
           "the pod filesystem, so a second node needs no shared volume and a restart loses nothing."
     },
     %{
-      key: Status.claim!("admin_api"),
+      key: "admin_api",
       eyebrow: "Runnable",
       title: "Administration and moderation",
       body:
@@ -147,7 +145,7 @@ defmodule EltrixSite.Capabilities do
           "admin paths so tooling you already run keeps working. Every look at a user's data is logged."
     },
     %{
-      key: Status.claim!("sync"),
+      key: "sync",
       eyebrow: "Real-time",
       title: "Sync that stays awake",
       body:
@@ -162,22 +160,11 @@ defmodule EltrixSite.Capabilities do
         ]
   def features, do: @features
 
-  @doc "The capabilities the landing page claims. Each is `done` or this did not compile."
+  @doc "The capabilities the landing page claims."
   @spec works() :: [%{key: String.t(), title: String.t(), body: String.t()}]
   def works, do: Enum.map(@works, &Map.put(&1, :title, title(&1.key)))
 
-  @doc "Everything not finished, by status, so the page cannot show only good news."
-  @spec absent() :: [%{key: String.t(), title: String.t(), status: Status.status()}]
-  def absent do
-    claimed = MapSet.new(@works, & &1.key)
-
-    Status.all()
-    |> Enum.reject(fn {key, status} -> status == :done or MapSet.member?(claimed, key) end)
-    |> Enum.map(fn {key, status} -> %{key: key, title: title(key), status: status} end)
-    |> Enum.sort_by(&{&1.status == :none, &1.title})
-  end
-
-  @doc "A human name for a key. Naming, not claiming — the status still comes from the file."
+  @doc "A human name for a key."
   @spec title(String.t()) :: String.t()
   def title(key), do: Map.get(@titles, key, key)
 end
