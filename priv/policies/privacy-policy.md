@@ -52,7 +52,7 @@ online. They expire by themselves and do not survive a restart.
   2026-08-11, and the reason it stays declined.
 - **No message content in logs.** Request bodies are never logged. Account data
   carries cross-signing private-key material and federation bodies carry
-  ciphertext, so this is a rule in `CLAUDE.md` rather than a habit.
+  ciphertext, so this is a rule in `AGENTS.md` rather than a habit.
 - **No IP address history.** One last-seen address per device, overwritten, not
   a log.
 - **No read receipts sold, shared, or mined.** They exist because clients need
