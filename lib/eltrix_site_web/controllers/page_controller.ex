@@ -1,15 +1,13 @@
 defmodule EltrixSiteWeb.PageController do
   @moduledoc """
-  The landing page, the full status table, and the imprint.
+  The landing page and the imprint.
 
-  Nothing here writes a capability claim in prose. The page names keys and
-  `EltrixSite.Capabilities` answers for them, so a claim the tests stopped
-  backing fails the build rather than staying on the page — §5.3.
+  The capability cards come from `EltrixSite.Capabilities`. Nothing verifies
+  them any more — see `thehansogroup/eltrix_web#8`.
   """
   use EltrixSiteWeb, :controller
 
   alias EltrixSite.Capabilities
-  alias EltrixSite.Status
 
   def home(conn, _params) do
     conn
@@ -52,20 +50,6 @@ defmodule EltrixSiteWeb.PageController do
         state: "building"
       }
     ]
-  end
-
-  def status(conn, _params) do
-    rows =
-      Status.all()
-      |> Enum.map(fn {key, status} ->
-        %{key: key, title: Capabilities.title(key), status: status}
-      end)
-      |> Enum.sort_by(& &1.title)
-
-    conn
-    |> assign(:page_title, "Status")
-    |> assign(:rows, rows)
-    |> render(:status)
   end
 
   def imprint(conn, _params) do
