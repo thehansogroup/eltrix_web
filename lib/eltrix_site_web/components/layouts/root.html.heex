@@ -6,7 +6,7 @@
     <meta name="csrf-token" content={get_csrf_token()} />
     <meta
       name="description"
-      content="Eltrix is a Matrix homeserver written in Elixir. This site is generated from the project's own test status."
+      content="Eltrix is a Matrix homeserver written in Elixir."
     />
     <.live_title default="Eltrix" suffix=" · Eltrix">{assigns[:page_title]}</.live_title>
     <link phx-track-static rel="stylesheet" href={~p"/assets/css/app.css"} />
@@ -76,9 +76,7 @@
           <.link navigate={~p"/imprint"}>Imprint</.link>
         </nav>
         <p>
-          Eltrix is a Matrix homeserver written in Elixir. The capability
-          statuses on this site are generated from the project's own criteria,
-          and the build fails if a page claims more than they say.
+          Eltrix is a Matrix homeserver written in Elixir.
         </p>
       </div>
     </footer>

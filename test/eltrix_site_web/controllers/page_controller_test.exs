@@ -41,6 +41,35 @@ defmodule EltrixSiteWeb.PageControllerTest do
     end
   end
 
+  test "no page claims a guarantee the build no longer makes", %{conn: conn} do
+    # The claim gate went on 2026-08-25 (#7) and the footer went on saying it
+    # was there — "the capability statuses on this site are generated from the
+    # project's own criteria, and the build fails if a page claims more than
+    # they say" — on every page, for as long as nobody read the footer. That is
+    # #8's failure mode arriving through #8's own removal: a public page
+    # asserting a mechanism, in the present tense, twenty-four hours after the
+    # mechanism was deleted.
+    #
+    # Deliberately narrow. This cannot tell whether a *capability* card is true,
+    # which is what #8 is for and what needs Forgejo rather than a regex. It
+    # asserts only that the site does not advertise the check that is gone.
+    forbidden = [
+      ~r/build fails if/i,
+      ~r/generated from the project's own (test status|criteria)/i,
+      ~r/statuses on this site are generated/i
+    ]
+
+    for path <- ["/", "/terms", "/privacy", "/abuse", "/imprint"] do
+      html = conn |> get(path) |> html_response(200)
+
+      for pattern <- forbidden do
+        refute html =~ pattern,
+               "#{path} still advertises the compile-time claim gate (#{inspect(pattern)}), " <>
+                 "which was removed in #7"
+      end
+    end
+  end
+
   test "every page is reachable and has a heading", %{conn: conn} do
     for path <- ["/", "/terms", "/privacy", "/abuse", "/imprint"] do
       assert conn |> get(path) |> html_response(200) =~ "<h1>"

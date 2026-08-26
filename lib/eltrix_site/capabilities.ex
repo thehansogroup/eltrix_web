@@ -98,9 +98,10 @@ defmodule EltrixSite.Capabilities do
     }
   ]
 
-  # The six the landing page sells on, in the order it shows them. Same
-  # `claim!/1` gate as everything else: a key that slips to partial stops the
-  # build rather than leaving a feature card describing something that broke.
+  # The six the landing page sells on, in the order it shows them. These used
+  # to carry the same `claim!/1` gate as everything else — a key that slipped
+  # to partial stopped the build rather than leaving a feature card describing
+  # something that broke. Nothing checks them now; see the moduledoc.
   @features [
     %{
       key: "e2ee",
