@@ -37,6 +37,24 @@ The policies are **vendored rather than restated** so that the version people
 are held to is the version somebody edits. Never paraphrase a policy into a
 template here; copy the file.
 
+## `main` is branch-protected, and only the Quality gate gates it
+
+Armed 2026-08-27 (`jlxq0/mantis#141`). Direct push to `main` is refused;
+a merge waits on one required status context; approvals required **0**, so you
+still merge your own work once it is green.
+
+Required: `CI / Quality gate*` — a glob, because the job posts `CI / Quality
+gate (push)` on a branch push and `CI / Quality gate (pull_request)` on a PR
+head, and a literal matches one only.
+
+Measured on this repository's own commits, not read off the job list:
+
+| context | job | why excluded |
+|---|---|---|
+| `CI / Quality gate` | `check`, no `needs:` | **required** — the only job on every push *and* every PR |
+| `CI / Build and push image` | `docker`, `needs: check`, main/tag-only | never posts on a PR head, so requiring it blocks every PR; a skipped `needs:` job can post `success`, a gate green because nothing ran |
+| `Deploy Jekyll site to Pages / build`, `/ deploy` | Pages workflow, push-only | not a correctness gate, and it has only ever posted on `(push)` — it would never appear on a PR head |
+
 ## Assets are built before tests, and not only for the asset test
 
 `priv/static/assets` is gitignored, so without the `assets.setup` and
