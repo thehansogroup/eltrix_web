@@ -13,7 +13,24 @@ defmodule EltrixSiteWeb.PageControllerTest do
   (Postal SMTP to `smtp.postal.oddie.app`, Garage S3 from env, allowlisted
   federation only; no HTTP-client dep in `eltrix_web`; no phone-home library in
   any `mix.lock`) and would need their own instruments to hold under a test.
+
+  And it asserts about **what the origin renders, not what the edge serves**.
+  The render happens in-process; the page a customer loads is served through a
+  proxy, and a host the edge adds — a script injected at the proxy, a CDN
+  rewrite, an analytics tag in a Caddyfile — is invisible to a template render
+  and live on the served page. This is the `beta.outa.app` CSP seam from the
+  other side: `curl -sI | grep content-security-policy` reports what the edge
+  sends and says nothing about the origin, and this test reports what the
+  origin renders and says nothing about the edge. The deployed pages were
+  fetched by hand on 2026-09-02 and reached only `stats.oddie.app`; the edge is
+  a separate surface with no instrument on it, deliberately, because a suite
+  that reaches production is flaky, slow and untestable offline.
   """
+  # `async: false`, not for speed: the third-party test mutates
+  # `:analytics_domain` in the application env to render with analytics on, and
+  # an async sibling rendering a page mid-mutation would see it flip. Made
+  # `true` later, this fails as a mysterious cross-test flake with nothing in
+  # the failing test pointing at the cause.
   use EltrixSiteWeb.ConnCase, async: false
 
   alias EltrixSite.Capabilities
