@@ -21,6 +21,15 @@ jobs:
   check:
     name: Quality gate
     runs-on: ubuntu-22.04
+    # Not on tags. A tag names a commit already gated green on main (branch
+    # protection requires the gate), so re-running `mix ci` here is redundant.
+    # It is also the one place it *fails*: on a tag the actions/cache is cold
+    # (caches are branch-scoped and a tag inherits none), which forces a fresh
+    # build of lazy_html, an only:test NIF whose precompiled download 404s in
+    # CI and whose source fallback needs a C toolchain the ci-elixir image does
+    # not carry (make Error 127). The prod image build below is MIX_ENV=prod,
+    # excludes lazy_html, and runs regardless. See oddie-apps/platform#779.
+    if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
     # jlxq0, not julian. A wrong owner does not error usefully — the runner
     # dies at image pull before any step, so every job fails identically.
     container:
