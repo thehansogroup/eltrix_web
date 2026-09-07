@@ -55,25 +55,31 @@ Measured on this repository's own commits, not read off the job list:
 | `CI / Build and push image` | `docker`, `needs: check`, main/tag-only | never posts on a PR head, so requiring it blocks every PR; a skipped `needs:` job can post `success`, a gate green because nothing ran |
 | `Deploy Jekyll site to Pages / build`, `/ deploy` | Pages workflow, push-only | not a correctness gate, and it has only ever posted on `(push)` — it would never appear on a PR head |
 
-## A green build depends on a warm cache, so a green is not a green about the code
+## A green once depended on a warm cache, and why lazy_html was removed
 
-CI restores a branch-scoped `actions/cache` before `mix deps.get`, and the
-Quality gate passes only because that cache carries a pre-built `lazy_html`.
-`lazy_html` (an `only: :test` NIF) cannot be built cold in `ci-elixir`: its
-precompiled binary 404s and the source fallback dies `make Error 127` for want
-of a C toolchain. Any cold path hits it: a new branch, a cache eviction, a
-cache-key change, or a tag, whose cache is cold because caches are branch-scoped
-and a tag inherits none. `oddie-apps/infrastructure#98` is the fix and it is
-clark's; two other repositories carry the same dependency and have not hit it
-yet.
+CI restores a branch-scoped `actions/cache` before `mix deps.get`. This
+repository carried `{:lazy_html, only: :test}` as a direct dependency no test
+used, and `lazy_html` is a NIF that cannot be built cold in `ci-elixir`: its
+precompiled binary download and its lexbor source clone both go to `github.com`,
+which the CI network blocks, so the cold build fell to `make Error 128`. A green
+was therefore a green about a warm cache carrying a pre-built copy, not about the
+code, and any cold path (a new branch, a cache eviction, a cache-key change, a
+tag) failed. A cache eviction on 2026-09-07 broke every PR at once, and it had
+already cost `v0.1.0` its first build.
 
-That cold cache cost `v0.1.0` its first build, and two consequences are now in
-the workflow. The `check` job is skipped on tag refs (`refs/tags/v*`), because
-the commit was already gated on `main`, so re-running the gate is redundant and
-a tag is the one ref where the cold cache makes it fail. And because a skipped
-job reports `success`, the `docker` job refuses a tag whose commit is not on
-main (`compare main...<sha>`, `total_commits == 0`, failing closed) rather than
-trusting that green.
+It was removed: nothing used it, and the tests assert via `html_response` and
+`render_to_string`, not the LazyHTML backend. The repository now has no NIF that
+needs a cold compile, so a cold build no longer reaches `github.com`. The general
+fragility, a precompiled NIF silently falling back to a source build that needs
+egress, is `oddie-apps/infrastructure#98` and clark's. If a LazyHTML-backed test
+is ever added here, that has to be fixed first, because the dependency comes back
+with it.
+
+Two workflow consequences remain from before the removal and are still correct:
+the `check` job is skipped on tag refs, because a tag names a commit already
+gated on `main`, and because a skipped job reports `success` the `docker` job
+refuses a tag whose commit is not on main (`compare main...<sha>`,
+`total_commits == 0`, failing closed).
 
 ## Assets are built before tests, and not only for the asset test
 
