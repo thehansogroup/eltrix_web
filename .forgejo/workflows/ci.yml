@@ -81,6 +81,28 @@ jobs:
         with:
           persist-credentials: false
 
+      # The Quality gate is skipped on tags (it is redundant with main's gate
+      # and fails on a cold cache). That skip is only sound while every tag
+      # names a commit that already passed on main, and a skipped job reports
+      # success, so nothing else would catch a tag cut off an ungated commit.
+      # Enforce it here: compare main...<tagged sha>; total_commits is the count
+      # of commits in the tag not reachable from main, so 0 means the commit is
+      # on main and was gated, and anything else is a tag that never was. Fail
+      # closed if the count cannot be read. See oddie-apps/platform#779.
+      - name: Refuse a tag that is not on main
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          set -euo pipefail
+          api="https://forge.oddie.app/api/v1/repos/${GITHUB_REPOSITORY}/compare/main...${GITHUB_SHA}"
+          n=$(curl -sf -H "Authorization: token ${{ secrets.FORGE_PUSH_TOKEN }}" "$api" | jq -r '.total_commits')
+          if ! [[ "$n" =~ ^[0-9]+$ ]]; then
+            echo "::error::could not determine whether ${GITHUB_SHA} is on main (got '$n'); refusing"; exit 1
+          fi
+          if [ "$n" -ne 0 ]; then
+            echo "::error::tag commit ${GITHUB_SHA} is ${n} commit(s) ahead of main and never passed its gate; refusing to publish an ungated release"; exit 1
+          fi
+          echo "tag commit ${GITHUB_SHA} is on main; gated via branch protection"
+
       - name: Login to Forgejo registry
         run: |
           mkdir -p ~/.docker
