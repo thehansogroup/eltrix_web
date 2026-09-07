@@ -59,17 +59,22 @@ Measured on this repository's own commits, not read off the job list:
 
 CI restores a branch-scoped `actions/cache` before `mix deps.get`. This
 repository carried `{:lazy_html, only: :test}` as a direct dependency no test
-used, and `lazy_html` is a NIF that cannot be built cold in `ci-elixir`: its
-precompiled binary download and its lexbor source clone both go to `github.com`,
-which the CI network blocks, so the cold build fell to `make Error 128`. A green
-was therefore a green about a warm cache carrying a pre-built copy, not about the
-code, and any cold path (a new branch, a cache eviction, a cache-key change, a
-tag) failed. A cache eviction on 2026-09-07 broke every PR at once, and it had
-already cost `v0.1.0` its first build.
+used, and `lazy_html` could not install cold in `ci-elixir`, for two independent
+reasons and neither a standing network block. Its precompiled NIF is published
+as `nif-2.16` and no asset exists for that against the otp-28 image, so the
+download is `:enoent`, the artefact is absent rather than unreachable. The source
+fallback then times out cloning lexbor from `github.com` once, a connection
+failure that does not reproduce (github is reachable from the job path, measured
+by clark, and a cold build minutes later reached the tailwind download over the
+same path). Either way the cold build failed. So a green was a green about a warm
+cache carrying a pre-built copy, not about the code, and any cold path (a new
+branch, a cache eviction, a cache-key change, a tag) failed. A cache eviction on
+2026-09-07 broke every PR at once, and it had already cost `v0.1.0` its first
+build.
 
 It was removed: nothing used it, and the tests assert via `html_response` and
 `render_to_string`, not the LazyHTML backend. The repository now has no NIF that
-needs a cold compile, so a cold build no longer reaches `github.com`. The general
+needs a cold compile, so a cache eviction alone is now survivable. The general
 fragility, a precompiled NIF silently falling back to a source build that needs
 egress, is `oddie-apps/infrastructure#98` and clark's. If a LazyHTML-backed test
 is ever added here, that has to be fixed first, because the dependency comes back
